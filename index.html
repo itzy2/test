@@ -1,334 +1,44 @@
-<!DOCTYPE html>
-<html lang="ja">
-<head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
 
-  <title>ほしぞらみてみないか | 岐阜工業高校 2年3組</title>
-
-  <meta name="description" content="岐阜工業高校2年3組が文化祭で開催するプラネタリウム。星空の世界を体験しよう。">
-
-  <meta name="theme-color" content="#050817">
-
-  <link rel="stylesheet" href="style.css">
-</head>
-
-<body>
-
-  <canvas id="starCanvas"></canvas>
-
-  <div class="loading" id="loading">
-    <div class="loading-content">
-      <div class="loading-star">✦</div>
-      <p>UNIVERSE INITIALIZING...</p>
-      <div class="loading-line"></div>
-    </div>
-  </div>
-
-  <header class="header">
-    <a href="#home" class="logo">
-      <span class="logo-icon">✦</span>
-      HOSHIZORA
-      <small>CLASS 2-3</small>
-    </a>
-
-    <button class="menu-button" id="menuButton" aria-label="メニュー">
-      <span></span>
-      <span></span>
-      <span></span>
-    </button>
-
-    <nav class="navigation" id="navigation">
-      <a href="#home">HOME</a>
-      <a href="#about">ABOUT</a>
-      <a href="#program">PROGRAM</a>
-      <a href="#schedule">SCHEDULE</a>
-      <a href="#access">ACCESS</a>
-    </nav>
-  </header>
-
-  <main>
-
-    <!-- HERO -->
-
-    <section class="hero" id="home">
-
-      <div class="hero-content">
-
-        <p class="hero-subtitle">
-          GIFU TECHNOLOGY HIGH SCHOOL / CULTURE FESTIVAL
-        </p>
-
-        <div class="hero-symbol">✧</div>
-
-        <h1>
-          ほしぞら<br>
-          <span>みてみないか</span>
-        </h1>
-
-        <p class="hero-description">
-          いつもの空から、まだ知らない宇宙へ。<br>
-          2年3組が贈る、特別な星空体験。
-        </p>
-
-        <a href="#about" class="main-button">
-          <span>EXPLORE THE UNIVERSE</span>
-          <span class="button-arrow">→</span>
-        </a>
-
-        <div class="hero-bottom">
-          <span>PLANETARIUM EXPERIENCE</span>
-          <span>GIFU TECH 2-3</span>
-        </div>
-
-      </div>
-
-      <div class="scroll-indicator">
-        <span>SCROLL TO EXPLORE</span>
-        <div></div>
-      </div>
-
-    </section>
-
-
-    <!-- ABOUT -->
-
-    <section class="section about-section" id="about">
-
-      <div class="section-heading">
-        <span>01 / ABOUT</span>
-        <h2>星空を、もっと身近に。</h2>
-        <p>WELCOME TO OUR PLANETARIUM</p>
-      </div>
-
-      <div class="about-card">
-
-        <div class="about-visual">
-          <div class="planet planet-one"></div>
-          <div class="planet planet-two"></div>
-          <div class="orbit"></div>
-          <div class="orbit orbit-two"></div>
-          <span class="visual-star">✦</span>
-        </div>
-
-        <div class="about-text">
-          <span class="tag">OUR CONCEPT</span>
-
-          <h3>
-            夜空の向こうに、<br>
-            何が見えるだろう。
-          </h3>
-
-          <p>
-            岐阜工業高校2年3組がお届けする、
-            文化祭限定のプラネタリウム。
-          </p>
-
-          <p>
-            普段はなかなか見ることのできない
-            星空の世界を、理科講義室で体験してみませんか？
-            日常を少し離れて、宇宙の旅に出かけましょう。
-          </p>
-
-          <div class="about-label">
-            <span>PROJECT</span>
-            <strong>HOSHIZORA MITEMINAIKA</strong>
-          </div>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- PROGRAM -->
-
-    <section class="section program-section" id="program">
-
-      <div class="section-heading">
-        <span>02 / PROGRAM</span>
-        <h2>宇宙へのプログラム。</h2>
-        <p>YOUR JOURNEY STARTS HERE</p>
-      </div>
-
-      <div class="program-grid">
-
-        <article class="program-card">
-          <div class="program-number">01</div>
-          <div class="program-icon">✦</div>
-          <span class="tag">STAR EXPERIENCE</span>
-          <h3>満天の星空</h3>
-          <p>
-            見上げた先に広がる、幻想的な星空の世界を体験。
-          </p>
-          <span class="card-bottom">STARRY SKY →</span>
-        </article>
-
-        <article class="program-card">
-          <div class="program-number">02</div>
-          <div class="program-icon">☾</div>
-          <span class="tag">SPACE JOURNEY</span>
-          <h3>宇宙の旅</h3>
-          <p>
-            星空の向こうに広がる、未知の宇宙を感じよう。
-          </p>
-          <span class="card-bottom">SPACE →</span>
-        </article>
-
-        <article class="program-card">
-          <div class="program-number">03</div>
-          <div class="program-icon">◎</div>
-          <span class="tag">SPECIAL TIME</span>
-          <h3>特別なひととき</h3>
-          <p>
-            文化祭でしか味わえない、特別な時間をお届け。
-          </p>
-          <span class="card-bottom">EXPERIENCE →</span>
-        </article>
-
-      </div>
-
-      <p class="program-note">
-        ※上映内容は当日の案内をご確認ください。
-      </p>
-
-    </section>
-
-
-    <!-- MESSAGE -->
-
-    <section class="message-section">
-
-      <div class="message-content">
-        <span>FROM CLASS 2-3</span>
-
-        <h2>
-          空を見上げる。<br>
-          そこから始まる宇宙の旅。
-        </h2>
-
-        <p>
-          いつもとは少し違う景色を、<br>
-          私たちと一緒に見てみませんか？
-        </p>
-
-        <div class="message-line"></div>
-
-        <strong>ほしぞらみてみないか</strong>
-      </div>
-
-    </section>
-
-
-    <!-- SCHEDULE -->
-
-    <section class="section schedule-section" id="schedule">
-
-      <div class="section-heading">
-        <span>03 / SCHEDULE</span>
-        <h2>上映スケジュール。</h2>
-        <p>TIME TABLE</p>
-      </div>
-
-      <div class="schedule-box">
-
-        <div class="schedule-row">
-          <span class="schedule-time">OPEN</span>
-          <div>
-            <strong>時間</strong>
-            <p>9:30~14:00</p>
-          </div>
-          <span class="schedule-status">INFO</span>
-        </div>
-
-        <div class="schedule-row">
-          <span class="schedule-time">START</span>
-          <div>
-            <strong>上映開始時間</strong>
-            <p>当日の案内をご確認ください</p>
-          </div>
-          <span class="schedule-status">INFO</span>
-        </div>
-
-        <div class="schedule-row">
-          <span class="schedule-time">PLACE</span>
-          <div>
-            <strong>開催場所</strong>
-            <p>岐阜工業高校 理科講義室</p>
-          </div>
-          <span class="schedule-status">OPEN</span>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- ACCESS -->
-
-    <section class="section access-section" id="access">
-
-      <div class="section-heading">
-        <span>04 / ACCESS</span>
-        <h2>宇宙への入口。</h2>
-        <p>FIND OUR PLANETARIUM</p>
-      </div>
-
-      <div class="access-card">
-
-        <div class="access-icon">⌖</div>
-
-        <div>
-          <span class="tag">LOCATION</span>
-          <h3>岐阜工業高校</h3>
-          <p>理科講義室</p>
-          <p class="access-note">
-            当日は校内案内に従ってお越しください。
-          </p>
-        </div>
-
-      </div>
-
-    </section>
-
-
-    <!-- FINAL -->
-
-    <section class="final-section">
-
-      <div class="final-star">✦</div>
-
-      <p>THE UNIVERSE IS WAITING FOR YOU</p>
-
-      <h2>ほしぞら、<br>みてみないか。</h2>
-
-      <a href="#home" class="main-button">
-        BACK TO TOP
-        <span class="button-arrow">↑</span>
-      </a>
-
-    </section>
-
-  </main>
-
-
-  <footer class="footer">
-
-    <div class="footer-logo">
-      HOSHIZORA
-      <span>CLASS 2-3</span>
-    </div>
-
-    <p>岐阜工業高校 2年3組 文化祭企画</p>
-
-    <p class="copyright">
-      © 2026 HOSHIZORA MITEMINAIKA
-    </p>
-
-  </footer>
-
-
-  <script src="app.js"></script>
-
-</body>
-</html>
+const SUPABASE_URL = "https://hxrtpftlklgwesvanlpk.supabase.co";
+const SUPABASE_ANON_KEY = "sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
+
+const supabaseClient = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_ANON_KEY
+);
+
+// 会員番号からログイン用メールアドレスを作る
+async function login(memberNumber, password) {
+  const loginEmail =
+    memberNumber.trim() + "@orbis.example";
+
+  const { data, error } =
+    await supabaseClient.auth.signInWithPassword({
+      email: loginEmail,
+      password: password
+    });
+
+  if (error) {
+    alert("会員番号またはパスワードが違います");
+    return;
+  }
+
+  const { data: member, error: profileError } =
+    await supabaseClient
+      .from("members")
+      .select("member_number, full_name")
+      .eq("id", data.user.id)
+      .single();
+
+  if (profileError) {
+    alert("会員情報を確認できません");
+    await supabaseClient.auth.signOut();
+    return;
+  }
+
+  document.getElementById("login").hidden = true;
+  document.getElementById("dashboard").hidden = false;
+
+  document.getElementById("memberName").textContent =
+    member.full_name;
+}
