@@ -1,0 +1,345 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>ORBIS TEST 管理者ページ</title>
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+<style>
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#172033;font-family:Arial,"Noto Sans JP",sans-serif}
+header{background:#172554;color:white;padding:20px}
+header h1{margin:0;font-size:22px}
+main{max-width:1100px;margin:25px auto;padding:0 15px}
+.card{background:white;border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px #00000010}
+h2{font-size:19px;margin-top:0}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;margin:7px 0 14px;font-size:16px}
+button{background:#1d4ed8;color:white;border:0;border-radius:8px;padding:12px 18px;font-size:15px;cursor:pointer}
+button.secondary{background:#475569}
+button:disabled{opacity:.5}
+.hidden{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.stat{background:#eff6ff;border-radius:10px;padding:16px}
+.stat strong{display:block;font-size:25px;margin-top:8px}
+table{border-collapse:collapse;width:100%;background:white}
+th,td{padding:12px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:14px}
+th{background:#f8fafc}
+.table-wrap{overflow-x:auto}
+details{margin:10px 0;background:#f8fafc;padding:12px;border-radius:8px}
+.answer{padding:10px;border-bottom:1px solid #e2e8f0}
+.good{color:#15803d;font-weight:bold}
+.bad{color:#dc2626;font-weight:bold}
+#message{white-space:pre-wrap;color:#b91c1c;margin-top:10px}
+.small{font-size:13px;color:#64748b}
+</style>
+</head>
+<body>
+<header>
+  <h1>ORBIS TEST 管理者ページ</h1>
+  <div class="small" style="color:#dbeafe">受験結果・回答管理</div>
+</header>
+
+<main>
+  <section id="loginCard" class="card">
+    <h2>管理者ログイン</h2>
+    <label>メールアドレス</label>
+    <input id="email" type="email" placeholder="登録済みメールアドレス">
+    <label>パスワード</label>
+    <input id="password" type="password" placeholder="パスワード">
+    <button id="loginBtn" onclick="login()">ログイン</button>
+    <div id="message"></div>
+  </section>
+
+  <section id="dashboard" class="hidden">
+    <div class="card">
+      <div style="display:flex;justify-content:space-between;align-items:center;gap:10px;flex-wrap:wrap">
+        <h2>受験結果一覧</h2>
+        <button class="secondary" onclick="logout()">ログアウト</button>
+      </div>
+      <button onclick="loadResults()">最新情報に更新</button>
+    </div>
+
+    <div class="card stats">
+      <div class="stat">受験記録<strong id="totalCount">0</strong></div>
+      <div class="stat">提出済み<strong id="submittedCount">0</strong></div>
+      <div class="stat">受験中<strong id="ongoingCount">0</strong></div>
+    </div>
+
+    <div class="card">
+      <h2>絞り込み</h2>
+      <label>試験</label>
+      <select id="examFilter" onchange="renderResults()">
+        <option value="">すべての試験</option>
+      </select>
+      <label>受験者検索（会員番号・氏名）</label>
+      <input id="memberFilter" placeholder="検索する文字を入力" oninput="renderResults()">
+    </div>
+
+    <div class="card">
+      <h2>受験者の成績</h2>
+      <div class="table-wrap">
+        <table>
+          <thead>
+            <tr>
+              <th>会員番号</th>
+              <th>氏名</th>
+              <th>試験</th>
+              <th>正答数</th>
+              <th>状態</th>
+              <th>詳細</th>
+            </tr>
+          </thead>
+          <tbody id="resultsBody"></tbody>
+        </table>
+      </div>
+      <div id="emptyMessage" class="small"></div>
+    </div>
+  </section>
+</main>
+
+<script>
+const SUPABASE_URL = "https://hxrtpftlklgwesvanlpk.supabase.co";
+const SUPABASE_KEY = "sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
+
+const ADMIN_ID = "4f0efa53-d67b-4d73-9b28-908eadc20525";
+
+const db = window.supabase.createClient(
+  SUPABASE_URL,
+  SUPABASE_KEY
+);
+
+let attempts = [];
+let questions = [];
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(/[&<>"']/g, c => ({
+    "&":"&amp;",
+    "<":"&lt;",
+    ">":"&gt;",
+    '"':"&quot;",
+    "'":"&#39;"
+  }[c]));
+}
+
+function showMessage(message) {
+  document.getElementById("message").textContent = message;
+}
+
+async function login() {
+  const email = document.getElementById("email").value.trim();
+  const password = document.getElementById("password").value;
+  const btn = document.getElementById("loginBtn");
+
+  if (!email || !password) {
+    showMessage("メールアドレスとパスワードを入力してください。");
+    return;
+  }
+
+  btn.disabled = true;
+  showMessage("ログインしています...");
+
+  const { error } = await db.auth.signInWithPassword({
+    email,
+    password
+  });
+
+  btn.disabled = false;
+
+  if (error) {
+    showMessage("ログインできませんでした。\n" + error.message);
+    return;
+  }
+
+  await checkAdmin();
+}
+
+async function checkAdmin() {
+  const { data: { user }, error } = await db.auth.getUser();
+
+  if (error || !user) {
+    showMessage("ログイン情報を確認できません。");
+    return;
+  }
+
+  if (user.id !== ADMIN_ID) {
+    await db.auth.signOut();
+    showMessage("このアカウントには管理者権限がありません。");
+    return;
+  }
+
+  document.getElementById("loginCard").classList.add("hidden");
+  document.getElementById("dashboard").classList.remove("hidden");
+
+  await loadResults();
+}
+
+async function loadResults() {
+  const { data, error } = await db.rpc("admin_get_results");
+
+  if (error) {
+    alert("結果を取得できませんでした。\n" + error.message);
+    return;
+  }
+
+  attempts = data?.attempts || [];
+  questions = data?.questions || [];
+
+  document.getElementById("totalCount").textContent = attempts.length;
+  document.getElementById("submittedCount").textContent =
+    attempts.filter(a => a.submitted_at || a.status === "submitted").length;
+  document.getElementById("ongoingCount").textContent =
+    attempts.filter(a => !a.submitted_at && a.status !== "submitted").length;
+
+  const filter = document.getElementById("examFilter");
+  const previous = filter.value;
+  const examMap = new Map();
+
+  attempts.forEach(a => {
+    examMap.set(a.exam_code, a.exam_title);
+  });
+
+  filter.innerHTML = '<option value="">すべての試験</option>';
+
+  examMap.forEach((title, code) => {
+    const option = document.createElement("option");
+    option.value = code || "";
+    option.textContent = title || code || "試験名不明";
+    filter.appendChild(option);
+  });
+
+  filter.value = previous;
+  renderResults();
+}
+
+function renderResults() {
+  const exam = document.getElementById("examFilter").value;
+  const keyword = document.getElementById("memberFilter").value.trim().toLowerCase();
+
+  const filtered = attempts.filter(a => {
+    const matchExam = !exam || a.exam_code === exam;
+    const text = `${a.member_number || ""} ${a.full_name || ""}`.toLowerCase();
+    return matchExam && text.includes(keyword);
+  });
+
+  const body = document.getElementById("resultsBody");
+  body.innerHTML = "";
+
+  document.getElementById("emptyMessage").textContent =
+    filtered.length ? "" : "該当する受験記録はありません。";
+
+  filtered.forEach((a, index) => {
+    const submitted = !!a.submitted_at || a.status === "submitted";
+    const count = a.correct_count ?? "-";
+    const detailId = "detail-" + index;
+
+    const tr = document.createElement("tr");
+    tr.innerHTML = `
+      <td>${escapeHTML(a.member_number || "-")}</td>
+      <td>${escapeHTML(a.full_name || "氏名不明")}</td>
+      <td>${escapeHTML(a.exam_title || "-")}</td>
+      <td>${escapeHTML(count)}</td>
+      <td>${submitted ? "提出済み" : "受験中"}</td>
+      <td><button onclick="toggleDetail('${detailId}')">回答を見る</button></td>
+    `;
+
+    body.appendChild(tr);
+
+    const detailRow = document.createElement("tr");
+    detailRow.id = detailId;
+    detailRow.className = "hidden";
+
+    const detailCell = document.createElement("td");
+    detailCell.colSpan = 6;
+    detailCell.innerHTML = `
+      <div class="card">
+        <p><b>試験：</b>${escapeHTML(a.exam_title || "-")}</p>
+        <p><b>開始：</b>${escapeHTML(formatDate(a.started_at))}</p>
+        <p><b>提出：</b>${escapeHTML(formatDate(a.submitted_at))}</p>
+        <p><b>正答数：</b>${escapeHTML(count)}</p>
+        <h3>回答内容</h3>
+        ${renderAnswers(a)}
+      </div>
+    `;
+
+    detailRow.appendChild(detailCell);
+    body.appendChild(detailRow);
+  });
+}
+
+function toggleDetail(id) {
+  document.getElementById(id).classList.toggle("hidden");
+}
+
+function formatDate(value) {
+  if (!value) return "未提出";
+  const d = new Date(value);
+  return isNaN(d.getTime()) ? "-" : d.toLocaleString("ja-JP");
+}
+
+function renderAnswers(attempt) {
+  const qs = questions.filter(q => q.exam_id === attempt.exam_id)
+    .sort((a,b) => a.question_number - b.question_number);
+
+  const answers = attempt.answers || {};
+
+  if (!qs.length) {
+    return `<pre>${escapeHTML(JSON.stringify(answers, null, 2))}</pre>`;
+  }
+
+  return qs.map(q => {
+    let selected = answers[q.question_id];
+
+    if (selected === undefined) {
+      selected = answers[String(q.question_number)];
+    }
+
+    if (selected === undefined) {
+      selected = answers[q.question_number - 1];
+    }
+
+    if (selected && typeof selected === "object") {
+      selected = selected.answer ?? selected.selected ?? selected.value ?? JSON.stringify(selected);
+    }
+
+    const correct = q.correct_answer;
+    const answered = selected !== undefined && selected !== null && selected !== "";
+    const isCorrect = answered && String(selected) === String(correct);
+
+    return `
+      <div class="answer">
+        <b>第${escapeHTML(q.question_number)}問</b>
+        <p>${escapeHTML(q.question_text || "")}</p>
+        <p>受験者の回答：${answered ? escapeHTML(selected) : "未回答"}</p>
+        <p>正解：${escapeHTML(correct || "未設定")}</p>
+        <p class="${isCorrect ? "good" : "bad"}">
+          ${!answered ? "未回答" : isCorrect ? "正解" : "不正解"}
+        </p>
+      </div>
+    `;
+  }).join("");
+}
+
+async function logout() {
+  await db.auth.signOut();
+  location.reload();
+}
+
+async function initialize() {
+  const { data: { session } } = await db.auth.getSession();
+
+  if (session) {
+    await checkAdmin();
+  }
+}
+
+db.auth.onAuthStateChange((event, session) => {
+  if (event === "SIGNED_OUT") {
+    document.getElementById("dashboard").classList.add("hidden");
+    document.getElementById("loginCard").classList.remove("hidden");
+  }
+});
+
+initialize();
+</script>
+</body>
+</html>
