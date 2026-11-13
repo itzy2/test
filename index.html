@@ -3,128 +3,180 @@
 <html lang="ja">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width, initial-scale=1">
 <title>オルビス CBT 試験システム</title>
 
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
-* {
-  box-sizing: border-box;
+:root {
+  --navy: #17365d;
+  --blue: #2563eb;
+  --bg: #f1f5f9;
+  --border: #dbe2ea;
 }
-
+* { box-sizing: border-box; }
 body {
   margin: 0;
-  font-family: sans-serif;
-  background: #f1f5f9;
+  background: var(--bg);
   color: #1e293b;
+  font-family: "Yu Gothic", "Meiryo", sans-serif;
 }
-
 header {
-  background: #17365d;
+  background: var(--navy);
   color: white;
-  padding: 22px;
+  padding: 20px;
   text-align: center;
 }
-
+header h1 { margin: 0; font-size: 23px; }
+header p { margin: 7px 0 0; }
 main {
-  max-width: 850px;
-  margin: 30px auto;
-  padding: 15px;
+  max-width: 950px;
+  margin: 25px auto;
+  padding: 12px;
 }
-
 .card {
   background: white;
-  padding: 25px;
   border-radius: 12px;
-  box-shadow: 0 3px 12px #0001;
-  margin-bottom: 20px;
+  padding: 24px;
+  margin-bottom: 18px;
+  box-shadow: 0 3px 12px #0000000c;
 }
-
-h1, h2 {
-  margin-top: 0;
-}
-
+.hidden { display: none !important; }
+h2 { margin-top: 0; }
 label {
   display: block;
-  margin-top: 15px;
   font-weight: bold;
+  margin: 15px 0 6px;
 }
-
-input {
+input, textarea {
   width: 100%;
+  border: 1px solid var(--border);
+  border-radius: 7px;
   padding: 13px;
-  margin-top: 7px;
-  border: 1px solid #cbd5e1;
-  border-radius: 7px;
   font-size: 16px;
 }
-
+textarea { min-height: 100px; resize: vertical; }
 button {
-  width: 100%;
-  padding: 14px;
-  margin-top: 18px;
-  border: none;
+  border: 0;
   border-radius: 7px;
-  background: #1d4ed8;
+  padding: 13px 17px;
+  background: var(--blue);
   color: white;
-  font-size: 16px;
+  font-size: 15px;
   font-weight: bold;
   cursor: pointer;
 }
-
-button:hover {
-  background: #1e40af;
+button:disabled { opacity: .5; cursor: not-allowed; }
+button.secondary { background: #475569; }
+button.green { background: #0f766e; }
+button.red { background: #b91c1c; }
+.full { width: 100%; margin-top: 16px; }
+.error { color: #dc2626; font-weight: bold; }
+.muted { color: #64748b; }
+.exam-card {
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 18px;
+  margin: 14px 0;
 }
-
-.exam-button {
-  background: #0f766e;
+.exam-card h3 { margin-top: 0; }
+.exam-meta {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 12px;
+  color: #64748b;
+  font-size: 14px;
 }
-
-.hidden {
-  display: none !important;
+.exam-card button { margin-top: 12px; width: 100%; }
+.topbar {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
 }
-
-.error {
-  color: #dc2626;
-  font-weight: bold;
-}
-
-.notice {
-  background: #eff6ff;
-  padding: 12px;
-  border-radius: 7px;
-}
-
-.question {
-  padding: 18px 0;
-  border-bottom: 1px solid #ddd;
-}
-
-.question label {
-  font-weight: normal;
-}
-
-.question input {
-  margin-bottom: 8px;
-}
-
-#timer {
+.timer {
   position: sticky;
   top: 0;
+  z-index: 10;
   background: #991b1b;
   color: white;
+  padding: 14px;
   text-align: center;
-  padding: 12px;
-  font-size: 22px;
+  font-size: 23px;
   font-weight: bold;
-  z-index: 5;
 }
-
+.timer.warning { background: #b45309; }
+.progress {
+  height: 9px;
+  background: #e2e8f0;
+  border-radius: 10px;
+  overflow: hidden;
+  margin: 12px 0;
+}
+.progress-bar {
+  height: 100%;
+  width: 0;
+  background: #0f766e;
+}
+.question-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 7px;
+  margin: 15px 0;
+}
+.question-nav button {
+  width: 42px;
+  height: 42px;
+  padding: 0;
+  background: #cbd5e1;
+  color: #1e293b;
+}
+.question-nav button.answered { background: #0f766e; color: white; }
+.question-nav button.current { outline: 3px solid #2563eb; }
+.question {
+  border-top: 1px solid var(--border);
+  padding-top: 20px;
+  margin-top: 20px;
+}
+.question h3 { line-height: 1.6; }
+.choice {
+  display: flex;
+  gap: 10px;
+  align-items: flex-start;
+  padding: 12px;
+  margin: 8px 0;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  font-weight: normal;
+}
+.choice input {
+  width: auto;
+  margin-top: 4px;
+}
+.exam-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 20px;
+}
+.exam-actions button { flex: 1; }
+.notice {
+  background: #eff6ff;
+  border-left: 4px solid #2563eb;
+  padding: 14px;
+  border-radius: 5px;
+  line-height: 1.7;
+}
+.result-number {
+  font-size: 30px;
+  font-weight: bold;
+  color: var(--navy);
+}
 footer {
   text-align: center;
-  color: #64748b;
   padding: 25px;
+  color: #64748b;
 }
 </style>
 </head>
@@ -133,71 +185,98 @@ footer {
 
 <header>
   <h1>オルビス CBT 試験システム</h1>
-  <p>オンライン試験・受験管理システム</p>
+  <p>ORBiS Computer Based Testing</p>
 </header>
 
 <main>
 
-<!-- ログイン画面 -->
-<section id="login" class="card">
+<!-- ログイン -->
+<section id="loginScreen" class="card">
   <h2>受験者ログイン</h2>
+  <p class="muted">Supabaseに登録されているアカウントでログインしてください。</p>
 
-  <p>会員情報を入力してください。</p>
+  <label for="email">メールアドレス</label>
+  <input id="email" type="email" autocomplete="username"
+         placeholder="メールアドレス">
 
-  <label>会員番号</label>
-  <input id="memberNumber" placeholder="会員番号">
+  <label for="password">パスワード</label>
+  <input id="password" type="password"
+         autocomplete="current-password" placeholder="パスワード">
 
-  <label>氏名</label>
-  <input id="memberName" placeholder="氏名">
-
-  <label>パスワード</label>
-  <input id="password" type="password" placeholder="パスワード">
-
-  <button onclick="login()">ログイン</button>
-
-  <p id="loginMessage" class="error"></p>
+  <button id="loginButton" class="full" onclick="login()">ログイン</button>
+  <p id="loginError" class="error"></p>
 </section>
 
-<!-- テスト選択画面 -->
-<section id="selection" class="card hidden">
-  <h2>試験選択</h2>
-
-  <p id="welcome"></p>
-
-  <div class="notice">
-    受験できる試験を選択してください。
+<!-- 試験一覧 -->
+<section id="homeScreen" class="hidden">
+  <div class="card">
+    <div class="topbar">
+      <div>
+        <h2>受験者ページ</h2>
+        <p id="userEmail" class="muted"></p>
+      </div>
+      <button class="secondary" onclick="logout()">ログアウト</button>
+    </div>
   </div>
-
-  <button class="exam-button" onclick="startExam('regular')">
-    オルビステスト定期テストⅠ
-    <br>50問・120分
-  </button>
-
-  <button class="exam-button" onclick="startExam('general')">
-    オルビステスト総合問題２
-    <br>80分・100点満点
-  </button>
-
-  <p id="selectionMessage" class="error"></p>
-</section>
-
-<!-- 試験画面 -->
-<section id="exam" class="hidden">
-  <div id="timer">残り時間 00:00</div>
 
   <div class="card">
-    <h2 id="examTitle"></h2>
-    <p id="examDescription"></p>
-    <div id="questions"></div>
-    <button onclick="submitExam()">試験を終了して提出する</button>
+    <h2>試験一覧</h2>
+    <p>受験する試験を選択してください。</p>
+    <div id="examList">試験情報を読み込んでいます。</div>
+    <p id="examError" class="error"></p>
   </div>
 </section>
 
-<!-- 結果画面 -->
-<section id="result" class="card hidden">
-  <h2>試験終了</h2>
-  <p>受験が完了しました。</p>
-  <h3 id="resultMessage"></h3>
+<!-- 受験画面 -->
+<section id="examScreen" class="hidden">
+  <div id="timer" class="timer">残り時間 --:--</div>
+
+  <div class="card">
+    <div class="topbar">
+      <div>
+        <h2 id="activeExamTitle">試験</h2>
+        <p id="questionCounter" class="muted"></p>
+      </div>
+      <button class="secondary" onclick="showQuestionList()">問題一覧</button>
+    </div>
+
+    <div class="progress">
+      <div id="progressBar" class="progress-bar"></div>
+    </div>
+
+    <div id="questionNav" class="question-nav"></div>
+
+    <div id="questionArea"></div>
+
+    <div class="exam-actions">
+      <button class="secondary" onclick="moveQuestion(-1)">前の問題</button>
+      <button onclick="moveQuestion(1)">次の問題</button>
+    </div>
+
+    <button class="red full" onclick="confirmSubmit()">
+      試験を終了して提出する
+    </button>
+
+    <p class="muted">
+      ※提出後は回答を変更できません。
+    </p>
+    <p id="submitError" class="error"></p>
+  </div>
+</section>
+
+<!-- 提出処理中 -->
+<section id="loadingScreen" class="card hidden">
+  <h2>処理中</h2>
+  <p id="loadingMessage">試験情報を処理しています。</p>
+</section>
+
+<!-- 結果 -->
+<section id="resultScreen" class="card hidden">
+  <h2>受験終了</h2>
+  <p>回答の提出が完了しました。</p>
+  <p id="resultMessage" class="result-number"></p>
+  <p class="muted">試験結果を確認してください。</p>
+  <button class="full" onclick="backHome()">試験一覧に戻る</button>
 </section>
 
 </main>
@@ -207,284 +286,534 @@ footer {
 </footer>
 
 <script>
-/* ==================================
-   Supabase接続設定
-   ================================== */
+"use strict";
 
-const SUPABASE_URL = "https://hxrtpftlklgwesvanlpk.supabase.co";
-const SUPABASE_KEY = "sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
+/* ==========================================
+   1. Supabase設定
+   ========================================== */
 
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
+const SUPABASE_URL =
+  "https://hxrtpftlklgwesvanlpk.supabase.co";
 
-/* ==================================
-   システム変数
-   ================================== */
+const SUPABASE_KEY =
+  "sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
 
-let currentMember = null;
+if (!window.supabase) {
+  document.getElementById("loginError").textContent =
+    "Supabaseライブラリを読み込めません。通信環境を確認してください。";
+}
+
+const db = window.supabase
+  ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
+  : null;
+
+/* ==========================================
+   2. システム状態
+   ========================================== */
+
+let currentUser = null;
 let currentExam = null;
-let currentAttempt = null;
-let timeLeft = 0;
-let timerInterval = null;
+let currentAttemptId = null;
+let questions = [];
+let answers = {};
+let currentQuestionIndex = 0;
+let deadline = null;
+let timerId = null;
 let submitting = false;
 
-/* ==================================
-   ログイン
-   ================================== */
+/* ==========================================
+   3. 画面切り替え
+   ========================================== */
+
+function showScreen(id) {
+  const screens = [
+    "loginScreen",
+    "homeScreen",
+    "examScreen",
+    "loadingScreen",
+    "resultScreen"
+  ];
+
+  screens.forEach(screen => {
+    document.getElementById(screen).classList.add("hidden");
+  });
+
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function setLoading(message) {
+  document.getElementById("loadingMessage").textContent = message;
+  showScreen("loadingScreen");
+}
+
+/* ==========================================
+   4. ログイン
+   ========================================== */
 
 async function login() {
-  const number = document.getElementById("memberNumber").value.trim();
-  const name = document.getElementById("memberName").value.trim();
+  if (!db) return;
+
+  const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
+  const errorBox = document.getElementById("loginError");
+  const button = document.getElementById("loginButton");
 
-  const message = document.getElementById("loginMessage");
+  errorBox.textContent = "";
 
-  message.textContent = "";
-
-  if (!number || !name || !password) {
-    message.textContent = "すべての項目を入力してください。";
+  if (!email || !password) {
+    errorBox.textContent =
+      "メールアドレスとパスワードを入力してください。";
     return;
   }
 
-  try {
-    const email = number + "@orbis.example";
+  button.disabled = true;
+  button.textContent = "ログイン中...";
 
-    const { data, error } =
-      await db.auth.signInWithPassword({
-        email: email,
-        password: password
-      });
+  try {
+    const { data, error } = await db.auth.signInWithPassword({
+      email,
+      password
+    });
 
     if (error) throw error;
 
-    const { data: member, error: memberError } =
-      await db
-        .from("members")
-        .select("member_number, name")
-        .eq("member_number", number)
-        .maybeSingle();
-
-    if (memberError) throw memberError;
-
-    if (!member || member.name !== name) {
-      await db.auth.signOut();
-      throw new Error("会員番号または氏名が一致しません。");
-    }
-
-    currentMember = member;
-
-    document.getElementById("login").classList.add("hidden");
-    document.getElementById("selection").classList.remove("hidden");
-
-    document.getElementById("welcome").textContent =
-      name + " さん、ログインしました。";
+    currentUser = data.user;
+    await loadHome();
 
   } catch (error) {
-    message.textContent = error.message;
+    errorBox.textContent = "ログインできません：" + error.message;
+  } finally {
+    button.disabled = false;
+    button.textContent = "ログイン";
   }
 }
 
-/* ==================================
-   試験開始
-   ================================== */
+/* ==========================================
+   5. ログアウト
+   ========================================== */
 
-async function startExam(type) {
-  const message = document.getElementById("selectionMessage");
-  message.textContent = "";
+async function logout() {
+  if (!db) return;
 
-  if (!currentMember) {
-    message.textContent = "ログインしてください。";
+  if (currentAttemptId && !submitting) {
+    alert("受験中はログアウトできません。先に試験を提出してください。");
     return;
   }
 
-  try {
-    const examCode =
-      type === "regular"
-        ? "regular"
-        : "general";
+  await db.auth.signOut();
+  currentUser = null;
+  showScreen("loginScreen");
+}
 
-    const { data: attemptId, error } =
-      await db.rpc("start_exam", {
-        p_exam_code: examCode
-      });
+/* ==========================================
+   6. ログイン状態の確認
+   ========================================== */
+
+async function initialize() {
+  if (!db) return;
+
+  try {
+    const { data, error } = await db.auth.getSession();
 
     if (error) throw error;
 
-    currentAttempt = attemptId;
-    currentExam = type;
-
-    const { data: exam, error: examError } =
-      await db
-        .from("exams")
-        .select("*")
-        .eq("exam_code", examCode)
-        .single();
-
-    if (examError) throw examError;
-
-    const { data: questions, error: questionError } =
-      await db
-        .from("questions")
-        .select("id, question_number, question_text, choices")
-        .eq("exam_code", examCode)
-        .order("question_number");
-
-    if (questionError) throw questionError;
-
-    if (!questions || questions.length === 0) {
-      throw new Error("問題データが登録されていません。");
-    }
-
-    timeLeft = type === "regular"
-      ? 120 * 60
-      : 80 * 60;
-
-    document.getElementById("selection").classList.add("hidden");
-    document.getElementById("exam").classList.remove("hidden");
-
-    document.getElementById("examTitle").textContent = exam.title;
-
-    document.getElementById("examDescription").textContent =
-      "制限時間内にすべての問題に回答してください。";
-
-    renderQuestions(questions);
-    startTimer();
-
-  } catch (error) {
-    message.textContent = error.message;
-  }
-}
-
-/* ==================================
-   問題表示
-   ================================== */
-
-function renderQuestions(questions) {
-  const area = document.getElementById("questions");
-  area.innerHTML = "";
-
-  questions.forEach((q, index) => {
-    const div = document.createElement("div");
-    div.className = "question";
-
-    const title = document.createElement("h3");
-    title.textContent =
-      "問題 " + (q.question_number || index + 1);
-
-    const text = document.createElement("p");
-    text.textContent = q.question_text;
-
-    div.appendChild(title);
-    div.appendChild(text);
-
-    if (Array.isArray(q.choices) && q.choices.length > 0) {
-      q.choices.forEach((choice, i) => {
-        const label = document.createElement("label");
-        const input = document.createElement("input");
-
-        input.type = "radio";
-        input.name = "answer_" + q.id;
-        input.value = String(i);
-
-        label.appendChild(input);
-        label.appendChild(
-          document.createTextNode(" " + choice)
-        );
-
-        div.appendChild(label);
-      });
+    if (data.session) {
+      currentUser = data.session.user;
+      await loadHome();
     } else {
-      const input = document.createElement("input");
-      input.type = "text";
-      input.id = "answer_" + q.id;
-      input.placeholder = "回答を入力してください";
-
-      div.appendChild(input);
+      showScreen("loginScreen");
     }
-
-    area.appendChild(div);
-  });
+  } catch (error) {
+    document.getElementById("loginError").textContent =
+      "接続エラー：" + error.message;
+  }
 }
 
-/* ==================================
-   タイマー
-   ================================== */
+/* ==========================================
+   7. 試験一覧
+   ========================================== */
 
-function startTimer() {
-  updateTimer();
+async function loadHome() {
+  showScreen("homeScreen");
 
-  timerInterval = setInterval(() => {
-    timeLeft--;
-    updateTimer();
+  document.getElementById("userEmail").textContent =
+    currentUser.email;
 
-    if (timeLeft <= 0) {
-      clearInterval(timerInterval);
-      submitExam();
-    }
-  }, 1000);
-}
+  const area = document.getElementById("examList");
+  const errorBox = document.getElementById("examError");
 
-function updateTimer() {
-  const minutes = Math.floor(timeLeft / 60);
-  const seconds = timeLeft % 60;
+  area.textContent = "試験情報を読み込んでいます...";
+  errorBox.textContent = "";
 
-  document.getElementById("timer").textContent =
-    "残り時間 " +
-    String(minutes).padStart(2, "0") + ":" +
-    String(seconds).padStart(2, "0");
-}
+  try {
+    const { data: exams, error } = await db
+      .from("exams")
+      .select("exam_code,title,description,duration_minutes")
+      .eq("is_active", true)
+      .order("exam_code");
 
-/* ==================================
-   回答提出
-   ================================== */
+    if (error) throw error;
 
-async function submitExam() {
-  if (submitting || !currentAttempt) return;
-
-  submitting = true;
-  clearInterval(timerInterval);
-
-  const answers = {};
-
-  document.querySelectorAll("#questions .question").forEach(div => {
-    const radio = div.querySelector("input[type=radio]:checked");
-
-    if (radio) {
-      const all = div.querySelector("input[type=radio]");
-      answers[all.name.replace("answer_", "")] = radio.value;
+    if (!exams || exams.length === 0) {
+      area.textContent = "現在、受験可能な試験はありません。";
       return;
     }
 
-    const input = div.querySelector("input[type=text]");
+    area.replaceChildren();
 
-    if (input) {
-      answers[input.id.replace("answer_", "")] = input.value;
+    for (const exam of exams) {
+      const card = document.createElement("div");
+      card.className = "exam-card";
+
+      const title = document.createElement("h3");
+      title.textContent = exam.title;
+
+      const description = document.createElement("p");
+      description.textContent = exam.description || "";
+
+      const meta = document.createElement("div");
+      meta.className = "exam-meta";
+
+      const duration = document.createElement("span");
+      duration.textContent =
+        "制限時間：" + exam.duration_minutes + "分";
+
+      meta.appendChild(duration);
+
+      const button = document.createElement("button");
+      button.textContent = "この試験を受験する";
+      button.onclick = () => beginExam(exam);
+
+      card.append(title, description, meta, button);
+      area.appendChild(card);
     }
+
+  } catch (error) {
+    area.textContent = "";
+    errorBox.textContent =
+      "試験一覧の取得に失敗しました：" + error.message;
+  }
+}
+
+/* ==========================================
+   8. 試験開始
+   ========================================== */
+
+async function beginExam(exam) {
+  if (!confirm(
+    exam.title + "を開始します。\n開始後は制限時間が進みます。\nよろしいですか？"
+  )) return;
+
+  setLoading("受験資格を確認しています...");
+
+  try {
+    const { data, error } = await db.rpc("start_exam", {
+      p_exam_code: exam.exam_code
+    });
+
+    if (error) throw error;
+
+    // start_examは以下のJSONを返す設計
+    // { attempt_id: UUID, expires_at: ISO日時 }
+
+    const result = Array.isArray(data) ? data[0] : data;
+
+    if (!result || !result.attempt_id || !result.expires_at) {
+      throw new Error("受験開始情報の形式が正しくありません。");
+    }
+
+    currentExam = exam;
+    currentAttemptId = result.attempt_id;
+    deadline = new Date(result.expires_at).getTime();
+
+    if (!Number.isFinite(deadline) || deadline <= Date.now()) {
+      throw new Error("試験の終了時刻が不正です。");
+    }
+
+    await loadQuestions(exam.exam_code);
+
+    answers = {};
+    currentQuestionIndex = 0;
+    submitting = false;
+
+    document.getElementById("activeExamTitle").textContent =
+      exam.title;
+
+    showScreen("examScreen");
+    renderQuestion();
+    startTimer();
+
+  } catch (error) {
+    await loadHome();
+    document.getElementById("examError").textContent =
+      "試験を開始できません：" + error.message;
+  }
+}
+
+/* ==========================================
+   9. 問題取得
+   ========================================== */
+
+async function loadQuestions(examCode) {
+  const { data, error } = await db
+    .from("questions")
+    .select("id,question_number,question_text,choices,question_type")
+    .eq("exam_code", examCode)
+    .order("question_number");
+
+  if (error) throw error;
+
+  if (!data || data.length === 0) {
+    throw new Error("問題データが登録されていません。");
+  }
+
+  questions = data;
+}
+
+/* ==========================================
+   10. 問題表示
+   ========================================== */
+
+function renderQuestion() {
+  const q = questions[currentQuestionIndex];
+
+  if (!q) return;
+
+  const area = document.getElementById("questionArea");
+  area.replaceChildren();
+
+  const heading = document.createElement("h3");
+  heading.textContent =
+    "問題 " + q.question_number;
+
+  const text = document.createElement("p");
+  text.textContent = q.question_text;
+
+  area.append(heading, text);
+
+  const saved = answers[q.id] ?? "";
+
+  if (Array.isArray(q.choices) && q.choices.length > 0) {
+    q.choices.forEach((choice, index) => {
+      const label = document.createElement("label");
+      label.className = "choice";
+
+      const input = document.createElement("input");
+      input.type = "radio";
+      input.name = "currentAnswer";
+      input.value = String(index);
+      input.checked = String(saved) === String(index);
+
+      input.addEventListener("change", () => {
+        answers[q.id] = input.value;
+        updateQuestionNav();
+      });
+
+      const span = document.createElement("span");
+      span.textContent = choice;
+
+      label.append(input, span);
+      area.appendChild(label);
+    });
+  } else {
+    const input = document.createElement("textarea");
+    input.placeholder = "ここに回答を入力してください。";
+    input.value = saved;
+
+    input.addEventListener("input", () => {
+      answers[q.id] = input.value;
+      updateQuestionNav();
+    });
+
+    area.appendChild(input);
+  }
+
+  document.getElementById("questionCounter").textContent =
+    (currentQuestionIndex + 1) + " / " + questions.length + " 問";
+
+  document.getElementById("progressBar").style.width =
+    ((currentQuestionIndex + 1) / questions.length * 100) + "%";
+
+  updateQuestionNav();
+}
+
+/* ==========================================
+   11. 問題番号ナビゲーション
+   ========================================== */
+
+function updateQuestionNav() {
+  const nav = document.getElementById("questionNav");
+  nav.replaceChildren();
+
+  questions.forEach((q, index) => {
+    const button = document.createElement("button");
+    button.textContent = q.question_number;
+
+    if (answers[q.id] !== undefined &&
+        String(answers[q.id]).trim() !== "") {
+      button.classList.add("answered");
+    }
+
+    if (index === currentQuestionIndex) {
+      button.classList.add("current");
+    }
+
+    button.onclick = () => {
+      currentQuestionIndex = index;
+      renderQuestion();
+    };
+
+    nav.appendChild(button);
   });
+}
+
+function showQuestionList() {
+  document.getElementById("questionNav").scrollIntoView({
+    behavior: "smooth",
+    block: "center"
+  });
+}
+
+/* ==========================================
+   12. 前後の問題へ移動
+   ========================================== */
+
+function moveQuestion(direction) {
+  const next = currentQuestionIndex + direction;
+
+  if (next < 0 || next >= questions.length) return;
+
+  currentQuestionIndex = next;
+  renderQuestion();
+  window.scrollTo({ top: 0, behavior: "smooth" });
+}
+
+/* ==========================================
+   13. タイマー
+   ========================================== */
+
+function startTimer() {
+  clearInterval(timerId);
+  updateTimer();
+
+  timerId = setInterval(() => {
+    updateTimer();
+
+    if (Date.now() >= deadline) {
+      clearInterval(timerId);
+      submitExam(true);
+    }
+  }, 500);
+}
+
+function updateTimer() {
+  const remaining = Math.max(0, deadline - Date.now());
+  const totalSeconds = Math.ceil(remaining / 1000);
+
+  const minutes = Math.floor(totalSeconds / 60);
+  const seconds = totalSeconds % 60;
+
+  const timer = document.getElementById("timer");
+
+  timer.textContent =
+    "残り時間 " +
+    String(minutes).padStart(2, "0") + ":" +
+    String(seconds).padStart(2, "0");
+
+  timer.classList.toggle("warning", remaining <= 5 * 60 * 1000);
+}
+
+/* ==========================================
+   14. 提出確認
+   ========================================== */
+
+function confirmSubmit() {
+  if (submitting) return;
+
+  const unanswered = questions.filter(q =>
+    answers[q.id] === undefined ||
+    String(answers[q.id]).trim() === ""
+  ).length;
+
+  const message =
+    "試験を提出しますか？\n" +
+    "未回答：" + unanswered + "問\n" +
+    "提出後は回答を変更できません。";
+
+  if (confirm(message)) {
+    submitExam(false);
+  }
+}
+
+/* ==========================================
+   15. 回答提出・採点
+   ========================================== */
+
+async function submitExam(automatic) {
+  if (submitting || !currentAttemptId) return;
+
+  submitting = true;
+  clearInterval(timerId);
+
+  document.getElementById("submitError").textContent = "";
+  setLoading("回答を提出し、採点しています...");
 
   try {
     const { data, error } = await db.rpc("submit_exam", {
-      p_attempt_id: currentAttempt,
+      p_attempt_id: currentAttemptId,
       p_answers: answers
     });
 
     if (error) throw error;
 
-    document.getElementById("exam").classList.add("hidden");
-    document.getElementById("result").classList.remove("hidden");
+    const result = Array.isArray(data) ? data[0] : data;
 
+    if (!result || result.correct_count === undefined) {
+      throw new Error("採点結果を取得できませんでした。");
+    }
+
+    currentAttemptId = null;
+    deadline = null;
+    questions = [];
+    answers = {};
+
+    showScreen("resultScreen");
+
+    // 正答数だけを表示する
     document.getElementById("resultMessage").textContent =
-      "正答数：" + data + "問";
+      "正答数：" + result.correct_count + "問";
 
   } catch (error) {
     submitting = false;
-    document.getElementById("examDescription").textContent =
-      "提出に失敗しました：" + error.message;
+    showScreen("examScreen");
+
+    document.getElementById("submitError").textContent =
+      "提出エラー：" + error.message +
+      "。回答を保持しています。もう一度提出してください。";
   }
 }
-</script>
 
+/* ==========================================
+   16. 試験一覧に戻る
+   ========================================== */
+
+async function backHome() {
+  currentExam = null;
+  currentAttemptId = null;
+  deadline = null;
+  questions = [];
+  answers = {};
+  submitting = false;
+
+  await loadHome();
+}
+
+/* ==========================================
+   17. 起動
+   ========================================== */
+
+initialize();
+
+</script>
 </body>
 </html>
