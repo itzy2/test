@@ -1,44 +1,444 @@
 
-const SUPABASE_URL = "https://hxrtpftlklgwesvanlpk.supabase.co";
-const SUPABASE_ANON_KEY = "sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>オルビステスト CBT</title>
 
-const supabaseClient = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_ANON_KEY
-);
+<script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
-// 会員番号からログイン用メールアドレスを作る
-async function login(memberNumber, password) {
-  const loginEmail =
-    memberNumber.trim() + "@orbis.example";
+<style>
+body {
+  margin: 0;
+  font-family: Arial, sans-serif;
+  background: #f1f4f9;
+  color: #172033;
+}
+header {
+  background: #101827;
+  color: white;
+  padding: 20px;
+  font-size: 22px;
+  font-weight: bold;
+}
+main {
+  max-width: 900px;
+  margin: 30px auto;
+  padding: 15px;
+}
+.card {
+  background: white;
+  padding: 25px;
+  border-radius: 14px;
+  margin-bottom: 20px;
+  box-shadow: 0 3px 12px #0001;
+}
+h1 { font-size: 25px; }
+label {
+  display: block;
+  margin-top: 15px;
+  font-weight: bold;
+}
+input, textarea {
+  width: 100%;
+  padding: 12px;
+  margin-top: 6px;
+  border: 1px solid #ccc;
+  border-radius: 8px;
+  box-sizing: border-box;
+}
+button {
+  padding: 12px 20px;
+  border: none;
+  border-radius: 8px;
+  background: #2457d6;
+  color: white;
+  font-weight: bold;
+  cursor: pointer;
+  margin-top: 15px;
+}
+button:disabled { opacity: .5; }
+.exam {
+  border: 1px solid #ddd;
+  padding: 18px;
+  border-radius: 10px;
+  margin: 12px 0;
+}
+.question {
+  padding: 20px 0;
+  border-bottom: 1px solid #ddd;
+}
+.choice {
+  display: block;
+  padding: 10px;
+  border: 1px solid #ddd;
+  border-radius: 8px;
+  margin: 7px 0;
+}
+.choice input {
+  width: auto;
+  margin-right: 10px;
+}
+.timer {
+  font-size: 25px;
+  color: #c62828;
+  font-weight: bold;
+}
+.error { color: #c62828; }
+.hidden { display: none; }
+.result {
+  text-align: center;
+  font-size: 24px;
+}
+#correctCount {
+  font-size: 55px;
+  color: #2457d6;
+  font-weight: bold;
+}
+</style>
+</head>
 
-  const { data, error } =
-    await supabaseClient.auth.signInWithPassword({
-      email: loginEmail,
+<body>
+
+<header>ORBIS TEST CBT</header>
+
+<main>
+
+<!-- Supabase設定 -->
+<section id="setup" class="card">
+<h1>システム接続</h1>
+
+<label>Supabase Project URL</label>
+<input id="projectUrl" placeholder="https://hxrtpftlklgwesvanlpk.supabase.co">
+
+<label>Supabase Publishable Key</label>
+<input id="publishableKey" placeholder="sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ">
+
+<button onclick="connectSupabase()">接続する</button>
+<p id="setupMessage" class="error"></p>
+</section>
+
+<!-- ログイン -->
+<section id="login" class="card hidden">
+<h1>ログイン</h1>
+
+<label>会員番号</label>
+<input id="memberNo">
+
+<label>パスワード</label>
+<input id="password" type="password">
+
+<label>氏名</label>
+<input id="fullName">
+
+<button onclick="login()">ログイン</button>
+<p id="loginMessage" class="error"></p>
+</section>
+
+<!-- テスト選択 -->
+<section id="selection" class="card hidden">
+<h1>受験するテストを選択</h1>
+<p id="welcome"></p>
+
+<div class="exam">
+<h2>オルビステスト定期テストⅠ</h2>
+<p>数学応用Ⅰ・Ⅱ 対策プリント</p>
+<p>全50問 / 120分</p>
+<button onclick="startExam('MATH50')">
+受験する
+</button>
+</div>
+
+<div class="exam">
+<h2>オルビステスト総合問題２</h2>
+<p>国語・数学・英語・科学</p>
+<p>100点満点 / 80分</p>
+<button onclick="startExam('GENERAL2')">
+受験する
+</button>
+</div>
+
+<button onclick="logout()">ログアウト</button>
+</section>
+
+<!-- 受験画面 -->
+<section id="test" class="card hidden">
+<div style="display:flex;justify-content:space-between;gap:15px">
+<h1 id="testTitle"></h1>
+<div class="timer" id="timer">00:00</div>
+</div>
+
+<p id="testInfo"></p>
+
+<form id="questionForm">
+<div id="questions"></div>
+<button type="button" onclick="submitExam()">
+回答を提出する
+</button>
+</form>
+
+<p id="testMessage" class="error"></p>
+</section>
+
+<!-- 結果 -->
+<section id="result" class="card result hidden">
+<h1>受験結果</h1>
+<p>正答数</p>
+<div id="correctCount">0問</div>
+<p>採点が完了しました。</p>
+<p>正解や配点は表示されません。</p>
+<button onclick="backToSelection()">戻る</button>
+</section>
+
+</main>
+
+<script>
+let supabaseClient;
+let currentUser;
+let currentMember;
+let currentExam;
+let attemptId;
+let questionData = [];
+let answers = {};
+let timerInterval;
+let deadline;
+let submitting = false;
+
+function show(id) {
+  ["setup","login","selection","test","result"]
+    .forEach(x => document.getElementById(x).classList.add("hidden"));
+  document.getElementById(id).classList.remove("hidden");
+}
+
+function connectSupabase() {
+  const url = document.getElementById("projectUrl").value.trim();
+  const key = document.getElementById("publishableKey").value.trim();
+
+  try {
+    supabaseClient = window.supabase.createClient(url,key);
+    show("login");
+  } catch(e) {
+    document.getElementById("setupMessage").textContent = e.message;
+  }
+}
+
+async function login() {
+  const no = document.getElementById("memberNo").value.trim();
+  const password = document.getElementById("password").value;
+  const name = document.getElementById("fullName").value.trim();
+
+  if (!no || !password || !name) {
+    return document.getElementById("loginMessage").textContent =
+      "すべて入力してください。";
+  }
+
+  try {
+    const {data,error} = await supabaseClient.auth.signInWithPassword({
+      email: no.toLowerCase() + "@orbis.example",
       password: password
     });
 
-  if (error) {
-    alert("会員番号またはパスワードが違います");
-    return;
-  }
+    if(error) throw error;
 
-  const { data: member, error: profileError } =
-    await supabaseClient
-      .from("members")
-      .select("member_number, full_name")
-      .eq("id", data.user.id)
+    currentUser = data.user;
+
+    const {data:member,error:memberError} =
+      await supabaseClient.from("members")
+      .select("id,member_number,full_name")
+      .eq("id",currentUser.id)
       .single();
 
-  if (profileError) {
-    alert("会員情報を確認できません");
-    await supabaseClient.auth.signOut();
+    if(memberError) throw memberError;
+
+    if(member.member_number !== no || member.full_name.trim() !== name) {
+      await supabaseClient.auth.signOut();
+      throw new Error("会員番号または氏名が一致しません。");
+    }
+
+    currentMember = member;
+    document.getElementById("welcome").textContent =
+      member.full_name + " さん、ログイン中です。";
+
+    show("selection");
+
+  } catch(e) {
+    document.getElementById("loginMessage").textContent = e.message;
+  }
+}
+
+async function startExam(code) {
+  if(!confirm("このテストを開始しますか？一人一回のみ受験できます。")) return;
+
+  try {
+    const {data,error} = await supabaseClient.rpc("start_exam",{
+      p_exam_code:code
+    });
+
+    if(error) throw error;
+
+    const started = Array.isArray(data) ? data[0] : data;
+    attemptId = typeof started === "string"
+      ? started
+      : (started.attempt_id || started.id);
+
+    if(!attemptId) throw new Error("受験IDを取得できません。");
+
+    const {data:exam,error:examError} =
+      await supabaseClient.from("exams")
+      .select("id,title,duration_minutes,total_questions")
+      .eq("exam_code",code)
+      .single();
+
+    if(examError) throw examError;
+
+    const {data:questions,error:questionError} =
+      await supabaseClient.from("questions")
+      .select("id,question_number,question_text,choices")
+      .eq("exam_id",exam.id)
+      .order("question_number");
+
+    if(questionError) throw questionError;
+    if(!questions.length) throw new Error("問題が登録されていません。");
+
+    currentExam = exam;
+    questionData = questions;
+    answers = {};
+
+    document.getElementById("testTitle").textContent = exam.title;
+    document.getElementById("testInfo").textContent =
+      exam.total_questions + "問 / " + exam.duration_minutes + "分";
+
+    renderQuestions();
+    deadline = Date.now() + exam.duration_minutes * 60000;
+    show("test");
+    startTimer();
+
+  } catch(e) {
+    alert(e.message);
+  }
+}
+
+function renderQuestions() {
+  const area = document.getElementById("questions");
+  area.innerHTML = "";
+
+  questionData.forEach((q,index) => {
+    const box = document.createElement("div");
+    box.className = "question";
+
+    const title = document.createElement("h3");
+    title.textContent = "問" + q.question_number + "　" + q.question_text;
+    box.appendChild(title);
+
+    const choices = Array.isArray(q.choices) ? q.choices : [];
+
+    if(choices.length > 0) {
+      choices.forEach(choice => {
+        const value = typeof choice === "string" ? choice : choice.value;
+        const labelText = typeof choice === "string"
+          ? choice : (choice.label || choice.value);
+
+        const label = document.createElement("label");
+        label.className = "choice";
+
+        const radio = document.createElement("input");
+        radio.type = "radio";
+        radio.name = "q_" + q.id;
+        radio.value = value;
+
+        radio.addEventListener("change",() => {
+          answers[q.id] = value;
+        });
+
+        label.appendChild(radio);
+        label.appendChild(document.createTextNode(labelText));
+        box.appendChild(label);
+      });
+    } else {
+      const input = document.createElement("textarea");
+      input.placeholder = "回答を入力してください";
+      input.addEventListener("input",() => {
+        answers[q.id] = input.value;
+      });
+      box.appendChild(input);
+    }
+
+    area.appendChild(box);
+  });
+}
+
+function startTimer() {
+  clearInterval(timerInterval);
+
+  function tick() {
+    const remain = Math.max(0,deadline-Date.now());
+    const seconds = Math.floor(remain/1000);
+    const h = Math.floor(seconds/3600);
+    const m = Math.floor(seconds%3600/60);
+    const s = seconds%60;
+
+    document.getElementById("timer").textContent =
+      [h,m,s].map(v=>String(v).padStart(2,"0")).join(":");
+
+    if(remain <= 0) {
+      clearInterval(timerInterval);
+      submitExam(true);
+    }
+  }
+
+  tick();
+  timerInterval = setInterval(tick,1000);
+}
+
+async function submitExam(auto = false) {
+  if(submitting || !attemptId) return;
+
+  if(!auto && !confirm("回答を提出しますか？提出後は変更できません。")) {
     return;
   }
 
-  document.getElementById("login").hidden = true;
-  document.getElementById("dashboard").hidden = false;
+  submitting = true;
 
-  document.getElementById("memberName").textContent =
-    member.full_name;
+  try {
+    const {data,error} = await supabaseClient.rpc("submit_exam",{
+      p_attempt_id:attemptId,
+      p_answers:answers
+    });
+
+    if(error) throw error;
+
+    const result = Array.isArray(data) ? data[0] : data;
+    const count = Number(
+      typeof result === "number" ? result : result.correct_count
+    );
+
+    if(!Number.isFinite(count)) throw new Error("採点結果を取得できません。");
+
+    clearInterval(timerInterval);
+    document.getElementById("correctCount").textContent = count + "問";
+    attemptId = null;
+    show("result");
+
+  } catch(e) {
+    submitting = false;
+    document.getElementById("testMessage").textContent =
+      "提出に失敗しました: " + e.message;
+  }
 }
+
+async function logout() {
+  if(!confirm("ログアウトしますか？")) return;
+  await supabaseClient.auth.signOut();
+  currentUser = null;
+  currentMember = null;
+  show("login");
+}
+
+async function backToSelection() {
+  show("selection");
+}
+</script>
+
+</body>
+</html>
