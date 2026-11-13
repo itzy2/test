@@ -10,173 +10,188 @@
 
 <style>
 :root {
-  --navy: #17365d;
-  --blue: #2563eb;
-  --bg: #f1f5f9;
-  --border: #dbe2ea;
+  --navy:#17365d;
+  --blue:#2563eb;
+  --bg:#f1f5f9;
+  --border:#dbe2ea;
 }
-* { box-sizing: border-box; }
+* { box-sizing:border-box; }
 body {
-  margin: 0;
-  background: var(--bg);
-  color: #1e293b;
-  font-family: "Yu Gothic", "Meiryo", sans-serif;
+  margin:0;
+  background:var(--bg);
+  color:#1e293b;
+  font-family:"Yu Gothic","Meiryo",sans-serif;
 }
 header {
-  background: var(--navy);
-  color: white;
-  padding: 20px;
-  text-align: center;
+  background:var(--navy);
+  color:white;
+  padding:22px 15px;
+  text-align:center;
 }
-header h1 { margin: 0; font-size: 23px; }
-header p { margin: 7px 0 0; }
+header h1 { margin:0; font-size:24px; }
+header p { margin:7px 0 0; }
 main {
-  max-width: 950px;
-  margin: 25px auto;
-  padding: 12px;
+  max-width:950px;
+  margin:25px auto;
+  padding:12px;
 }
 .card {
-  background: white;
-  border-radius: 12px;
-  padding: 24px;
-  margin-bottom: 18px;
-  box-shadow: 0 3px 12px #0000000c;
+  background:white;
+  border-radius:12px;
+  padding:24px;
+  margin-bottom:18px;
+  box-shadow:0 3px 12px #0000000c;
 }
-.hidden { display: none !important; }
-h2 { margin-top: 0; }
+.hidden { display:none !important; }
+h2 { margin-top:0; }
 label {
-  display: block;
-  font-weight: bold;
-  margin: 15px 0 6px;
+  display:block;
+  font-weight:bold;
+  margin:15px 0 6px;
 }
-input, textarea {
-  width: 100%;
-  border: 1px solid var(--border);
-  border-radius: 7px;
-  padding: 13px;
-  font-size: 16px;
+input,textarea {
+  width:100%;
+  border:1px solid var(--border);
+  border-radius:7px;
+  padding:13px;
+  font-size:16px;
 }
-textarea { min-height: 100px; resize: vertical; }
 button {
-  border: 0;
-  border-radius: 7px;
-  padding: 13px 17px;
-  background: var(--blue);
-  color: white;
-  font-size: 15px;
-  font-weight: bold;
-  cursor: pointer;
+  border:0;
+  border-radius:7px;
+  padding:13px 17px;
+  background:var(--blue);
+  color:white;
+  font-size:15px;
+  font-weight:bold;
+  cursor:pointer;
 }
-button:disabled { opacity: .5; cursor: not-allowed; }
-button.secondary { background: #475569; }
-button.green { background: #0f766e; }
-button.red { background: #b91c1c; }
-.full { width: 100%; margin-top: 16px; }
-.error { color: #dc2626; font-weight: bold; }
-.muted { color: #64748b; }
+button:disabled { opacity:.5; cursor:not-allowed; }
+button.secondary { background:#475569; }
+button.green { background:#0f766e; }
+button.red { background:#b91c1c; }
+.full { width:100%; margin-top:16px; }
+.error { color:#dc2626; font-weight:bold; white-space:pre-wrap; }
+.muted { color:#64748b; }
 .exam-card {
-  border: 1px solid var(--border);
-  border-radius: 10px;
-  padding: 18px;
-  margin: 14px 0;
+  border:1px solid var(--border);
+  border-radius:10px;
+  padding:18px;
+  margin:14px 0;
 }
-.exam-card h3 { margin-top: 0; }
+.exam-card h3 { margin-top:0; }
 .exam-meta {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 12px;
-  color: #64748b;
-  font-size: 14px;
+  display:flex;
+  flex-wrap:wrap;
+  gap:12px;
+  color:#64748b;
+  font-size:14px;
 }
-.exam-card button { margin-top: 12px; width: 100%; }
+.exam-card button { margin-top:12px; width:100%; }
 .topbar {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  gap: 12px;
-  flex-wrap: wrap;
+  display:flex;
+  justify-content:space-between;
+  align-items:center;
+  gap:12px;
+  flex-wrap:wrap;
 }
 .timer {
-  position: sticky;
-  top: 0;
-  z-index: 10;
-  background: #991b1b;
-  color: white;
-  padding: 14px;
-  text-align: center;
-  font-size: 23px;
-  font-weight: bold;
+  position:sticky;
+  top:0;
+  z-index:10;
+  background:#991b1b;
+  color:white;
+  padding:14px;
+  text-align:center;
+  font-size:23px;
+  font-weight:bold;
 }
-.timer.warning { background: #b45309; }
+.timer.warning { background:#b45309; }
 .progress {
-  height: 9px;
-  background: #e2e8f0;
-  border-radius: 10px;
-  overflow: hidden;
-  margin: 12px 0;
+  height:9px;
+  background:#e2e8f0;
+  border-radius:10px;
+  overflow:hidden;
+  margin:12px 0;
 }
 .progress-bar {
-  height: 100%;
-  width: 0;
-  background: #0f766e;
+  height:100%;
+  width:0;
+  background:#0f766e;
+  transition:width .2s;
 }
 .question-nav {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 7px;
-  margin: 15px 0;
+  display:flex;
+  flex-wrap:wrap;
+  gap:7px;
+  margin:15px 0;
 }
 .question-nav button {
-  width: 42px;
-  height: 42px;
-  padding: 0;
-  background: #cbd5e1;
-  color: #1e293b;
+  width:42px;
+  height:42px;
+  padding:0;
+  background:#cbd5e1;
+  color:#1e293b;
 }
-.question-nav button.answered { background: #0f766e; color: white; }
-.question-nav button.current { outline: 3px solid #2563eb; }
+.question-nav button.answered {
+  background:#0f766e;
+  color:white;
+}
+.question-nav button.current {
+  outline:3px solid #2563eb;
+}
 .question {
-  border-top: 1px solid var(--border);
-  padding-top: 20px;
-  margin-top: 20px;
+  border-top:1px solid var(--border);
+  padding-top:20px;
+  margin-top:20px;
 }
-.question h3 { line-height: 1.6; }
+.question h3 { line-height:1.7; }
 .choice {
-  display: flex;
-  gap: 10px;
-  align-items: flex-start;
-  padding: 12px;
-  margin: 8px 0;
-  border: 1px solid var(--border);
-  border-radius: 8px;
-  font-weight: normal;
+  display:flex;
+  gap:10px;
+  align-items:flex-start;
+  padding:13px;
+  margin:9px 0;
+  border:1px solid var(--border);
+  border-radius:8px;
+  font-weight:normal;
+  cursor:pointer;
 }
 .choice input {
-  width: auto;
-  margin-top: 4px;
+  width:auto;
+  margin-top:4px;
+}
+.choice:has(input:checked) {
+  border-color:var(--blue);
+  background:#eff6ff;
 }
 .exam-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 20px;
+  display:flex;
+  gap:10px;
+  margin-top:20px;
 }
-.exam-actions button { flex: 1; }
+.exam-actions button { flex:1; }
 .notice {
-  background: #eff6ff;
-  border-left: 4px solid #2563eb;
-  padding: 14px;
-  border-radius: 5px;
-  line-height: 1.7;
+  background:#eff6ff;
+  border-left:4px solid var(--blue);
+  padding:14px;
+  border-radius:5px;
+  line-height:1.7;
 }
 .result-number {
-  font-size: 30px;
-  font-weight: bold;
-  color: var(--navy);
+  font-size:30px;
+  font-weight:bold;
+  color:var(--navy);
 }
 footer {
-  text-align: center;
-  padding: 25px;
-  color: #64748b;
+  text-align:center;
+  padding:25px;
+  color:#64748b;
+}
+@media(max-width:600px) {
+  .card { padding:17px; }
+  header h1 { font-size:20px; }
+  .exam-actions { flex-direction:column; }
 }
 </style>
 </head>
@@ -190,10 +205,12 @@ footer {
 
 <main>
 
-<!-- ログイン -->
+<!-- ログイン画面 -->
 <section id="loginScreen" class="card">
   <h2>受験者ログイン</h2>
-  <p class="muted">Supabaseに登録されているアカウントでログインしてください。</p>
+  <p class="muted">
+    登録済みのメールアドレスとパスワードを入力してください。
+  </p>
 
   <label for="email">メールアドレス</label>
   <input id="email" type="email" autocomplete="username"
@@ -201,9 +218,10 @@ footer {
 
   <label for="password">パスワード</label>
   <input id="password" type="password"
-         autocomplete="current-password" placeholder="パスワード">
+         autocomplete="current-password"
+         placeholder="パスワード">
 
-  <button id="loginButton" class="full" onclick="login()">ログイン</button>
+  <button id="loginButton" class="full">ログイン</button>
   <p id="loginError" class="error"></p>
 </section>
 
@@ -215,7 +233,7 @@ footer {
         <h2>受験者ページ</h2>
         <p id="userEmail" class="muted"></p>
       </div>
-      <button class="secondary" onclick="logout()">ログアウト</button>
+      <button id="logoutButton" class="secondary">ログアウト</button>
     </div>
   </div>
 
@@ -237,7 +255,7 @@ footer {
         <h2 id="activeExamTitle">試験</h2>
         <p id="questionCounter" class="muted"></p>
       </div>
-      <button class="secondary" onclick="showQuestionList()">問題一覧</button>
+      <button id="questionListButton" class="secondary">問題一覧</button>
     </div>
 
     <div class="progress">
@@ -245,29 +263,26 @@ footer {
     </div>
 
     <div id="questionNav" class="question-nav"></div>
-
     <div id="questionArea"></div>
 
     <div class="exam-actions">
-      <button class="secondary" onclick="moveQuestion(-1)">前の問題</button>
-      <button onclick="moveQuestion(1)">次の問題</button>
+      <button id="previousButton" class="secondary">前の問題</button>
+      <button id="nextButton">次の問題</button>
     </div>
 
-    <button class="red full" onclick="confirmSubmit()">
+    <button id="submitButton" class="red full">
       試験を終了して提出する
     </button>
 
-    <p class="muted">
-      ※提出後は回答を変更できません。
-    </p>
+    <p class="muted">※提出後は回答を変更できません。</p>
     <p id="submitError" class="error"></p>
   </div>
 </section>
 
-<!-- 提出処理中 -->
+<!-- 処理中 -->
 <section id="loadingScreen" class="card hidden">
   <h2>処理中</h2>
-  <p id="loadingMessage">試験情報を処理しています。</p>
+  <p id="loadingMessage">処理しています。</p>
 </section>
 
 <!-- 結果 -->
@@ -275,22 +290,20 @@ footer {
   <h2>受験終了</h2>
   <p>回答の提出が完了しました。</p>
   <p id="resultMessage" class="result-number"></p>
-  <p class="muted">試験結果を確認してください。</p>
-  <button class="full" onclick="backHome()">試験一覧に戻る</button>
+  <p class="muted">正答数を表示しています。</p>
+  <button id="backHomeButton" class="full">試験一覧に戻る</button>
 </section>
 
 </main>
 
-<footer>
-  ORBIS CBT SYSTEM
-</footer>
+<footer>ORBIS CBT SYSTEM</footer>
 
 <script>
 "use strict";
 
-/* ==========================================
-   1. Supabase設定
-   ========================================== */
+/* =====================================
+   1. Supabase接続設定
+===================================== */
 
 const SUPABASE_URL =
   "https://hxrtpftlklgwesvanlpk.supabase.co";
@@ -298,18 +311,13 @@ const SUPABASE_URL =
 const SUPABASE_KEY =
   "sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
 
-if (!window.supabase) {
-  document.getElementById("loginError").textContent =
-    "Supabaseライブラリを読み込めません。通信環境を確認してください。";
-}
-
 const db = window.supabase
   ? window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY)
   : null;
 
-/* ==========================================
+/* =====================================
    2. システム状態
-   ========================================== */
+===================================== */
 
 let currentUser = null;
 let currentExam = null;
@@ -321,9 +329,43 @@ let deadline = null;
 let timerId = null;
 let submitting = false;
 
-/* ==========================================
+function storageKey() {
+  return currentUser
+    ? "orbis_cbt_attempt_" + currentUser.id
+    : null;
+}
+
+function saveLocalState() {
+  if (!currentUser || !currentAttemptId || !currentExam) return;
+
+  const state = {
+    attemptId: currentAttemptId,
+    examId: currentExam.id,
+    deadline: deadline,
+    answers: answers,
+    savedAt: Date.now()
+  };
+
+  try {
+    localStorage.setItem(storageKey(), JSON.stringify(state));
+  } catch (error) {
+    console.error("回答の保存に失敗しました。", error);
+  }
+}
+
+function clearLocalState() {
+  if (!currentUser) return;
+
+  try {
+    localStorage.removeItem(storageKey());
+  } catch (error) {
+    console.error(error);
+  }
+}
+
+/* =====================================
    3. 画面切り替え
-   ========================================== */
+===================================== */
 
 function showScreen(id) {
   const screens = [
@@ -346,23 +388,36 @@ function setLoading(message) {
   showScreen("loadingScreen");
 }
 
-/* ==========================================
-   4. ログイン
-   ========================================== */
+/* =====================================
+   4. エラー表示
+===================================== */
+
+function showLoginError(message) {
+  document.getElementById("loginError").textContent = message;
+}
+
+function showExamError(message) {
+  document.getElementById("examError").textContent = message;
+}
+
+/* =====================================
+   5. ログイン
+===================================== */
 
 async function login() {
-  if (!db) return;
+  if (!db) {
+    showLoginError("Supabaseライブラリを読み込めません。");
+    return;
+  }
 
   const email = document.getElementById("email").value.trim();
   const password = document.getElementById("password").value;
-  const errorBox = document.getElementById("loginError");
   const button = document.getElementById("loginButton");
 
-  errorBox.textContent = "";
+  showLoginError("");
 
   if (!email || !password) {
-    errorBox.textContent =
-      "メールアドレスとパスワードを入力してください。";
+    showLoginError("メールアドレスとパスワードを入力してください。");
     return;
   }
 
@@ -381,36 +436,47 @@ async function login() {
     await loadHome();
 
   } catch (error) {
-    errorBox.textContent = "ログインできません：" + error.message;
+    showLoginError("ログインできません：" + error.message);
   } finally {
     button.disabled = false;
     button.textContent = "ログイン";
   }
 }
 
-/* ==========================================
-   5. ログアウト
-   ========================================== */
+/* =====================================
+   6. ログアウト
+===================================== */
 
 async function logout() {
-  if (!db) return;
-
   if (currentAttemptId && !submitting) {
-    alert("受験中はログアウトできません。先に試験を提出してください。");
+    alert("受験中はログアウトできません。試験を提出してください。");
     return;
   }
 
-  await db.auth.signOut();
+  if (!confirm("ログアウトしますか？")) return;
+
+  const { error } = await db.auth.signOut();
+
+  if (error) {
+    alert("ログアウトに失敗しました：" + error.message);
+    return;
+  }
+
   currentUser = null;
+  currentExam = null;
+  currentAttemptId = null;
   showScreen("loginScreen");
 }
 
-/* ==========================================
-   6. ログイン状態の確認
-   ========================================== */
+/* =====================================
+   7. 起動・ログイン状態確認
+===================================== */
 
 async function initialize() {
-  if (!db) return;
+  if (!db) {
+    showLoginError("Supabaseライブラリを読み込めません。");
+    return;
+  }
 
   try {
     const { data, error } = await db.auth.getSession();
@@ -423,21 +489,21 @@ async function initialize() {
     } else {
       showScreen("loginScreen");
     }
+
   } catch (error) {
-    document.getElementById("loginError").textContent =
-      "接続エラー：" + error.message;
+    showLoginError("接続エラー：" + error.message);
   }
 }
 
-/* ==========================================
-   7. 試験一覧
-   ========================================== */
+/* =====================================
+   8. 試験一覧
+===================================== */
 
 async function loadHome() {
   showScreen("homeScreen");
 
   document.getElementById("userEmail").textContent =
-    currentUser.email;
+    currentUser.email || "";
 
   const area = document.getElementById("examList");
   const errorBox = document.getElementById("examError");
@@ -448,7 +514,7 @@ async function loadHome() {
   try {
     const { data: exams, error } = await db
       .from("exams")
-      .select("exam_code,title,description,duration_minutes")
+      .select("id,exam_code,title,description,duration_minutes,total_questions")
       .eq("is_active", true)
       .order("exam_code");
 
@@ -461,7 +527,7 @@ async function loadHome() {
 
     area.replaceChildren();
 
-    for (const exam of exams) {
+    exams.forEach(exam => {
       const card = document.createElement("div");
       card.className = "exam-card";
 
@@ -478,15 +544,21 @@ async function loadHome() {
       duration.textContent =
         "制限時間：" + exam.duration_minutes + "分";
 
-      meta.appendChild(duration);
+      const count = document.createElement("span");
+      count.textContent =
+        "問題数：" + exam.total_questions + "問";
+
+      meta.append(duration, count);
 
       const button = document.createElement("button");
       button.textContent = "この試験を受験する";
-      button.onclick = () => beginExam(exam);
+      button.addEventListener("click", () => beginExam(exam));
 
       card.append(title, description, meta, button);
       area.appendChild(card);
-    }
+    });
+
+    await restoreActiveAttempt(exams);
 
   } catch (error) {
     area.textContent = "";
@@ -495,13 +567,72 @@ async function loadHome() {
   }
 }
 
-/* ==========================================
-   8. 試験開始
-   ========================================== */
+/* =====================================
+   9. 受験中データの復元
+===================================== */
+
+async function restoreActiveAttempt(exams) {
+  let saved;
+
+  try {
+    const raw = localStorage.getItem(storageKey());
+    if (!raw) return;
+
+    saved = JSON.parse(raw);
+  } catch (error) {
+    clearLocalState();
+    return;
+  }
+
+  if (!saved || !saved.attemptId || !saved.examId || !saved.deadline) {
+    clearLocalState();
+    return;
+  }
+
+  const exam = exams.find(item => item.id === saved.examId);
+
+  if (!exam) {
+    clearLocalState();
+    return;
+  }
+
+  const remainingAnswers =
+    saved.answers && typeof saved.answers === "object"
+      ? saved.answers
+      : {};
+
+  setLoading("受験中の試験を復元しています...");
+
+  try {
+    currentExam = exam;
+    currentAttemptId = saved.attemptId;
+    deadline = Number(saved.deadline);
+    answers = remainingAnswers;
+    currentQuestionIndex = 0;
+    submitting = false;
+
+    await loadQuestions(exam.id);
+
+    document.getElementById("activeExamTitle").textContent = exam.title;
+
+    showScreen("examScreen");
+    renderQuestion();
+    startTimer();
+
+  } catch (error) {
+    showScreen("homeScreen");
+    showExamError("受験情報の復元に失敗しました：" + error.message);
+  }
+}
+
+/* =====================================
+   10. 試験開始
+===================================== */
 
 async function beginExam(exam) {
   if (!confirm(
-    exam.title + "を開始します。\n開始後は制限時間が進みます。\nよろしいですか？"
+    exam.title +
+    "を開始します。\n開始後は制限時間が進みます。\nよろしいですか？"
   )) return;
 
   setLoading("受験資格を確認しています...");
@@ -513,52 +644,48 @@ async function beginExam(exam) {
 
     if (error) throw error;
 
-    // start_examは以下のJSONを返す設計
-    // { attempt_id: UUID, expires_at: ISO日時 }
-
-    const result = Array.isArray(data) ? data[0] : data;
-
-    if (!result || !result.attempt_id || !result.expires_at) {
-      throw new Error("受験開始情報の形式が正しくありません。");
+    if (!data) {
+      throw new Error("受験開始情報を取得できません。");
     }
 
     currentExam = exam;
-    currentAttemptId = result.attempt_id;
-    deadline = new Date(result.expires_at).getTime();
-
-    if (!Number.isFinite(deadline) || deadline <= Date.now()) {
-      throw new Error("試験の終了時刻が不正です。");
-    }
-
-    await loadQuestions(exam.exam_code);
-
+    currentAttemptId = data;
+    deadline = Date.now() + exam.duration_minutes * 60 * 1000;
     answers = {};
     currentQuestionIndex = 0;
     submitting = false;
 
-    document.getElementById("activeExamTitle").textContent =
-      exam.title;
+    saveLocalState();
+
+    await loadQuestions(exam.id);
+
+    document.getElementById("activeExamTitle").textContent = exam.title;
 
     showScreen("examScreen");
     renderQuestion();
     startTimer();
 
   } catch (error) {
+    currentAttemptId = null;
+    deadline = null;
+    questions = [];
+    answers = {};
+
     await loadHome();
-    document.getElementById("examError").textContent =
-      "試験を開始できません：" + error.message;
+
+    showExamError("試験を開始できません：" + error.message);
   }
 }
 
-/* ==========================================
-   9. 問題取得
-   ========================================== */
+/* =====================================
+   11. 問題取得
+===================================== */
 
-async function loadQuestions(examCode) {
+async function loadQuestions(examId) {
   const { data, error } = await db
     .from("questions")
-    .select("id,question_number,question_text,choices,question_type")
-    .eq("exam_code", examCode)
+    .select("id,question_number,question_text,choices,points")
+    .eq("exam_id", examId)
     .order("question_number");
 
   if (error) throw error;
@@ -570,9 +697,9 @@ async function loadQuestions(examCode) {
   questions = data;
 }
 
-/* ==========================================
-   10. 問題表示
-   ========================================== */
+/* =====================================
+   12. 問題表示
+===================================== */
 
 function renderQuestion() {
   const q = questions[currentQuestionIndex];
@@ -583,8 +710,7 @@ function renderQuestion() {
   area.replaceChildren();
 
   const heading = document.createElement("h3");
-  heading.textContent =
-    "問題 " + q.question_number;
+  heading.textContent = "問題 " + q.question_number;
 
   const text = document.createElement("p");
   text.textContent = q.question_text;
@@ -594,27 +720,29 @@ function renderQuestion() {
   const saved = answers[q.id] ?? "";
 
   if (Array.isArray(q.choices) && q.choices.length > 0) {
-    q.choices.forEach((choice, index) => {
+    q.choices.forEach(choice => {
       const label = document.createElement("label");
       label.className = "choice";
 
       const input = document.createElement("input");
       input.type = "radio";
       input.name = "currentAnswer";
-      input.value = String(index);
-      input.checked = String(saved) === String(index);
+      input.value = String(choice);
+      input.checked = String(saved) === String(choice);
 
       input.addEventListener("change", () => {
-        answers[q.id] = input.value;
+        answers[q.id] = String(choice);
+        saveLocalState();
         updateQuestionNav();
       });
 
       const span = document.createElement("span");
-      span.textContent = choice;
+      span.textContent = String(choice);
 
       label.append(input, span);
       area.appendChild(label);
     });
+
   } else {
     const input = document.createElement("textarea");
     input.placeholder = "ここに回答を入力してください。";
@@ -622,6 +750,7 @@ function renderQuestion() {
 
     input.addEventListener("input", () => {
       answers[q.id] = input.value;
+      saveLocalState();
       updateQuestionNav();
     });
 
@@ -637,9 +766,9 @@ function renderQuestion() {
   updateQuestionNav();
 }
 
-/* ==========================================
-   11. 問題番号ナビゲーション
-   ========================================== */
+/* =====================================
+   13. 問題番号一覧
+===================================== */
 
 function updateQuestionNav() {
   const nav = document.getElementById("questionNav");
@@ -649,8 +778,10 @@ function updateQuestionNav() {
     const button = document.createElement("button");
     button.textContent = q.question_number;
 
-    if (answers[q.id] !== undefined &&
-        String(answers[q.id]).trim() !== "") {
+    if (
+      answers[q.id] !== undefined &&
+      String(answers[q.id]).trim() !== ""
+    ) {
       button.classList.add("answered");
     }
 
@@ -658,10 +789,10 @@ function updateQuestionNav() {
       button.classList.add("current");
     }
 
-    button.onclick = () => {
+    button.addEventListener("click", () => {
       currentQuestionIndex = index;
       renderQuestion();
-    };
+    });
 
     nav.appendChild(button);
   });
@@ -674,9 +805,9 @@ function showQuestionList() {
   });
 }
 
-/* ==========================================
-   12. 前後の問題へ移動
-   ========================================== */
+/* =====================================
+   14. 前後の問題へ移動
+===================================== */
 
 function moveQuestion(direction) {
   const next = currentQuestionIndex + direction;
@@ -685,12 +816,16 @@ function moveQuestion(direction) {
 
   currentQuestionIndex = next;
   renderQuestion();
-  window.scrollTo({ top: 0, behavior: "smooth" });
+
+  window.scrollTo({
+    top: 0,
+    behavior: "smooth"
+  });
 }
 
-/* ==========================================
-   13. タイマー
-   ========================================== */
+/* =====================================
+   15. タイマー
+===================================== */
 
 function startTimer() {
   clearInterval(timerId);
@@ -707,6 +842,8 @@ function startTimer() {
 }
 
 function updateTimer() {
+  if (!deadline) return;
+
   const remaining = Math.max(0, deadline - Date.now());
   const totalSeconds = Math.ceil(remaining / 1000);
 
@@ -720,12 +857,15 @@ function updateTimer() {
     String(minutes).padStart(2, "0") + ":" +
     String(seconds).padStart(2, "0");
 
-  timer.classList.toggle("warning", remaining <= 5 * 60 * 1000);
+  timer.classList.toggle(
+    "warning",
+    remaining <= 5 * 60 * 1000
+  );
 }
 
-/* ==========================================
-   14. 提出確認
-   ========================================== */
+/* =====================================
+   16. 提出確認
+===================================== */
 
 function confirmSubmit() {
   if (submitting) return;
@@ -745,9 +885,9 @@ function confirmSubmit() {
   }
 }
 
-/* ==========================================
-   15. 回答提出・採点
-   ========================================== */
+/* =====================================
+   17. 回答提出・自動採点
+===================================== */
 
 async function submitExam(automatic) {
   if (submitting || !currentAttemptId) return;
@@ -756,7 +896,11 @@ async function submitExam(automatic) {
   clearInterval(timerId);
 
   document.getElementById("submitError").textContent = "";
-  setLoading("回答を提出し、採点しています...");
+  setLoading(
+    automatic
+      ? "制限時間終了。回答を自動提出しています..."
+      : "回答を提出し、採点しています..."
+  );
 
   try {
     const { data, error } = await db.rpc("submit_exam", {
@@ -772,30 +916,45 @@ async function submitExam(automatic) {
       throw new Error("採点結果を取得できませんでした。");
     }
 
+    const correctCount = Number(result.correct_count);
+
+    if (!Number.isFinite(correctCount)) {
+      throw new Error("正答数が正しくありません。");
+    }
+
+    clearLocalState();
+
     currentAttemptId = null;
+    currentExam = null;
     deadline = null;
     questions = [];
     answers = {};
+    submitting = false;
 
     showScreen("resultScreen");
 
-    // 正答数だけを表示する
     document.getElementById("resultMessage").textContent =
-      "正答数：" + result.correct_count + "問";
+      "正答数：" + correctCount + "問";
 
   } catch (error) {
     submitting = false;
+
     showScreen("examScreen");
 
     document.getElementById("submitError").textContent =
       "提出エラー：" + error.message +
-      "。回答を保持しています。もう一度提出してください。";
+      "\n回答はこのブラウザに保持されています。通信環境を確認して再提出してください。";
+
+    if (deadline && Date.now() >= deadline) {
+      document.getElementById("timer").textContent =
+        "制限時間終了・提出待ち";
+    }
   }
 }
 
-/* ==========================================
-   16. 試験一覧に戻る
-   ========================================== */
+/* =====================================
+   18. 試験一覧に戻る
+===================================== */
 
 async function backHome() {
   currentExam = null;
@@ -805,12 +964,45 @@ async function backHome() {
   answers = {};
   submitting = false;
 
+  clearInterval(timerId);
+
   await loadHome();
 }
 
-/* ==========================================
-   17. 起動
-   ========================================== */
+/* =====================================
+   19. ボタン設定
+===================================== */
+
+document.getElementById("loginButton")
+  .addEventListener("click", login);
+
+document.getElementById("logoutButton")
+  .addEventListener("click", logout);
+
+document.getElementById("previousButton")
+  .addEventListener("click", () => moveQuestion(-1));
+
+document.getElementById("nextButton")
+  .addEventListener("click", () => moveQuestion(1));
+
+document.getElementById("questionListButton")
+  .addEventListener("click", showQuestionList);
+
+document.getElementById("submitButton")
+  .addEventListener("click", confirmSubmit);
+
+document.getElementById("backHomeButton")
+  .addEventListener("click", backHome);
+
+/* Enterキーでログイン */
+document.getElementById("password")
+  .addEventListener("keydown", event => {
+    if (event.key === "Enter") login();
+  });
+
+/* =====================================
+   20. システム起動
+===================================== */
 
 initialize();
 
