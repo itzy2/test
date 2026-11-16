@@ -816,7 +816,7 @@ async function beginExam(exam) {
    11. 問題取得
 ===================================== */
 
-async function loadQuestions(examId) {
+  async function loadQuestions(examId) {
   const { data, error } = await db
     .from("questions")
     .select("id,question_number,question_text,choices,points")
@@ -831,6 +831,7 @@ async function loadQuestions(examId) {
 
   questions = data;
 }
+
 
 /* =====================================
    12. 問題表示
