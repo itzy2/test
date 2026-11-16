@@ -214,6 +214,50 @@ footer {
   header h1 { font-size:20px; }
   .exam-actions { flex-direction:column; }
 }
+
+
+/* 左右2カラムの試験画面 */
+.question-layout {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+  align-items: start;
+  margin-top: 20px;
+}
+
+.passage-panel {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 22px;
+  min-height: 350px;
+  line-height: 1.9;
+  white-space: pre-wrap;
+  overflow-wrap: anywhere;
+}
+
+.passage-panel h3 {
+  margin-top: 0;
+  color: #17365d;
+}
+
+.question-panel {
+  background: white;
+  border: 1px solid #dbe2ea;
+  border-radius: 10px;
+  padding: 22px;
+  min-height: 350px;
+}
+
+.question-panel h3 {
+  line-height: 1.8;
+}
+
+@media (max-width: 700px) {
+  .question-layout {
+    grid-template-columns: 1fr;
+  }
+}
 </style>
 </head>
 
