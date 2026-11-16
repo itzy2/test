@@ -845,14 +845,36 @@ function renderQuestion() {
   const area = document.getElementById("questionArea");
   area.replaceChildren();
 
+  // 左右のレイアウト
+  const layout = document.createElement("div");
+  layout.className = "question-layout";
+
+  // 左側：説明文・読解文
+  const passagePanel = document.createElement("div");
+  passagePanel.className = "passage-panel";
+
+  const passageTitle = document.createElement("h3");
+  passageTitle.textContent = "資料・説明文";
+
+  const passageContent = document.createElement("div");
+  passageContent.textContent =
+    q.passage_text || "この問題に共通の説明文はありません。";
+
+  passagePanel.append(passageTitle, passageContent);
+
+  // 右側：問題
+  const questionPanel = document.createElement("div");
+  questionPanel.className = "question-panel";
+
   const heading = document.createElement("h3");
   heading.textContent = "問題 " + q.question_number;
 
-  const text = document.createElement("p");
-  text.textContent = q.question_text;
+  const questionText = document.createElement("p");
+  questionText.textContent = q.question_text;
 
-  area.append(heading, text);
+  questionPanel.append(heading, questionText);
 
+  // 選択肢
   const saved = answers[q.id] ?? "";
 
   if (Array.isArray(q.choices) && q.choices.length > 0) {
@@ -876,9 +898,8 @@ function renderQuestion() {
       span.textContent = String(choice);
 
       label.append(input, span);
-      area.appendChild(label);
+      questionPanel.appendChild(label);
     });
-
   } else {
     const input = document.createElement("textarea");
     input.placeholder = "ここに回答を入力してください。";
@@ -890,9 +911,13 @@ function renderQuestion() {
       updateQuestionNav();
     });
 
-    area.appendChild(input);
+    questionPanel.appendChild(input);
   }
 
+  layout.append(passagePanel, questionPanel);
+  area.appendChild(layout);
+
+  // 問題番号・進捗表示
   document.getElementById("questionCounter").textContent =
     (currentQuestionIndex + 1) + " / " + questions.length + " 問";
 
@@ -901,6 +926,7 @@ function renderQuestion() {
 
   updateQuestionNav();
 }
+
 
 /* =====================================
    13. 問題番号一覧
