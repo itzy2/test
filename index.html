@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>オルビス CBT 試験システム</title>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
 
 <style>
@@ -30,7 +29,7 @@ header {
 header h1 { margin:0; font-size:24px; }
 header p { margin:7px 0 0; }
 main {
-  max-width:950px;
+  max-width:1450px;
   margin:25px auto;
   padding:12px;
 }
@@ -70,8 +69,13 @@ button.secondary { background:#475569; }
 button.green { background:#0f766e; }
 button.red { background:#b91c1c; }
 .full { width:100%; margin-top:16px; }
-.error { color:#dc2626; font-weight:bold; white-space:pre-wrap; }
+.error {
+  color:#dc2626;
+  font-weight:bold;
+  white-space:pre-wrap;
+}
 .muted { color:#64748b; }
+
 .exam-card {
   border:1px solid var(--border);
   border-radius:10px;
@@ -109,6 +113,7 @@ button.red { background:#b91c1c; }
 .exam-card.development-card button {
   background:#64748b;
 }
+
 .topbar {
   display:flex;
   justify-content:space-between;
@@ -124,10 +129,11 @@ button.red { background:#b91c1c; }
   color:white;
   padding:14px;
   text-align:center;
-  font-size:23px;
+  font-size:25px;
   font-weight:bold;
 }
 .timer.warning { background:#b45309; }
+
 .progress {
   height:9px;
   background:#e2e8f0;
@@ -141,46 +147,88 @@ button.red { background:#b91c1c; }
   background:#0f766e;
   transition:width .2s;
 }
+
 .question-nav {
   display:flex;
   flex-wrap:wrap;
-  gap:7px;
-  margin:15px 0;
+  gap:9px;
+  margin:18px 0;
 }
 .question-nav button {
-  width:42px;
-  height:42px;
+  width:52px;
+  height:52px;
   padding:0;
   background:#cbd5e1;
   color:#1e293b;
+  font-size:18px;
 }
 .question-nav button.answered {
   background:#0f766e;
   color:white;
 }
 .question-nav button.current {
-  outline:3px solid #2563eb;
+  outline:4px solid #2563eb;
 }
-.question {
-  border-top:1px solid var(--border);
-  padding-top:20px;
-  margin-top:20px;
+
+/* 左右分割レイアウト */
+.question-layout {
+  display:grid;
+  grid-template-columns:minmax(0,1fr) minmax(0,1fr);
+  gap:24px;
+  align-items:stretch;
+  margin-top:22px;
 }
-.question h3 { line-height:1.7; }
+.passage-panel,
+.question-panel {
+  min-width:0;
+  border:1px solid var(--border);
+  border-radius:14px;
+  padding:28px;
+  line-height:1.95;
+  overflow-wrap:anywhere;
+}
+.passage-panel {
+  background:#f8fafc;
+  color:#17365d;
+  min-height:480px;
+}
+.question-panel {
+  background:white;
+  min-height:480px;
+}
+.passage-panel h3,
+.question-panel h3 {
+  margin:0 0 24px;
+  font-size:23px;
+}
+.passage-content {
+  white-space:pre-wrap;
+  font-size:18px;
+  line-height:2;
+}
+.question-text {
+  white-space:pre-wrap;
+  font-size:19px;
+  line-height:2;
+  margin-bottom:25px;
+}
+
 .choice {
   display:flex;
-  gap:10px;
+  gap:12px;
   align-items:flex-start;
-  padding:13px;
-  margin:9px 0;
+  padding:15px;
+  margin:11px 0;
   border:1px solid var(--border);
-  border-radius:8px;
+  border-radius:9px;
   font-weight:normal;
   cursor:pointer;
+  line-height:1.7;
 }
 .choice input {
   width:auto;
-  margin-top:4px;
+  margin-top:5px;
+  flex-shrink:0;
 }
 .choice:has(input:checked) {
   border-color:var(--blue);
@@ -188,8 +236,8 @@ button.red { background:#b91c1c; }
 }
 .exam-actions {
   display:flex;
-  gap:10px;
-  margin-top:20px;
+  gap:12px;
+  margin-top:22px;
 }
 .exam-actions button { flex:1; }
 .notice {
@@ -209,53 +257,26 @@ footer {
   padding:25px;
   color:#64748b;
 }
+
+@media(max-width:800px) {
+  .question-layout {
+    grid-template-columns:1fr;
+  }
+  .passage-panel,
+  .question-panel {
+    min-height:0;
+    padding:20px;
+  }
+  .passage-content { font-size:16px; }
+  .question-text { font-size:17px; }
+}
 @media(max-width:600px) {
   .card { padding:17px; }
   header h1 { font-size:20px; }
   .exam-actions { flex-direction:column; }
-}
-
-
-/* 左右2カラムの試験画面 */
-.question-layout {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: 20px;
-  align-items: start;
-  margin-top: 20px;
-}
-
-.passage-panel {
-  background: #f8fafc;
-  border: 1px solid #cbd5e1;
-  border-radius: 10px;
-  padding: 22px;
-  min-height: 350px;
-  line-height: 1.9;
-  white-space: pre-wrap;
-  overflow-wrap: anywhere;
-}
-
-.passage-panel h3 {
-  margin-top: 0;
-  color: #17365d;
-}
-
-.question-panel {
-  background: white;
-  border: 1px solid #dbe2ea;
-  border-radius: 10px;
-  padding: 22px;
-  min-height: 350px;
-}
-
-.question-panel h3 {
-  line-height: 1.8;
-}
-
-@media (max-width: 700px) {
-  .question-layout {
-    grid-template-columns: 1fr;
+  .question-nav button {
+    width:43px;
+    height:43px;
   }
 }
 </style>
@@ -270,11 +291,10 @@ footer {
 
 <main>
 
+<!-- ログイン -->
 <section id="loginScreen" class="card">
   <h2>受験者ログイン</h2>
-  <p class="muted">
-    登録済みのメールアドレスとパスワードを入力してください。
-  </p>
+  <p class="muted">登録済みのメールアドレスとパスワードを入力してください。</p>
 
   <label for="email">メールアドレス</label>
   <input id="email" type="email" autocomplete="username"
@@ -289,6 +309,7 @@ footer {
   <p id="loginError" class="error"></p>
 </section>
 
+<!-- 試験一覧 -->
 <section id="homeScreen" class="hidden">
   <div class="card">
     <div class="topbar">
@@ -302,12 +323,13 @@ footer {
 
   <div class="card">
     <h2>試験一覧</h2>
-    <p>受験可能な試験を選択してください。公開前の試験も一覧に掲載しています。</p>
+    <p>受験可能な試験を選択してください。</p>
     <div id="examList">試験情報を読み込んでいます。</div>
     <p id="examError" class="error"></p>
   </div>
 </section>
 
+<!-- 受験画面 -->
 <section id="examScreen" class="hidden">
   <div id="timer" class="timer">残り時間 --:--</div>
 
@@ -341,11 +363,13 @@ footer {
   </div>
 </section>
 
+<!-- 処理中 -->
 <section id="loadingScreen" class="card hidden">
   <h2>処理中</h2>
   <p id="loadingMessage">処理しています。</p>
 </section>
 
+<!-- 結果 -->
 <section id="resultScreen" class="card hidden">
   <h2>受験終了</h2>
   <p>回答の提出が完了しました。</p>
@@ -362,7 +386,7 @@ footer {
 "use strict";
 
 /* =====================================
-   1. Supabase接続設定
+   1. Supabase接続
 ===================================== */
 
 const SUPABASE_URL =
@@ -401,15 +425,15 @@ function saveLocalState() {
   const state = {
     attemptId: currentAttemptId,
     examId: currentExam.id,
-    deadline: deadline,
-    answers: answers,
+    deadline,
+    answers,
     savedAt: Date.now()
   };
 
   try {
     localStorage.setItem(storageKey(), JSON.stringify(state));
   } catch (error) {
-    console.error("回答の保存に失敗しました。", error);
+    console.error("回答保存エラー", error);
   }
 }
 
@@ -540,7 +564,6 @@ async function initialize() {
 
   try {
     const { data, error } = await db.auth.getSession();
-
     if (error) throw error;
 
     if (data.session) {
@@ -582,8 +605,9 @@ async function loadHome() {
 
     area.replaceChildren();
 
-    // データベースに登録済みの試験
-    if (exams && exams.length > 0) {
+    if (!exams || exams.length === 0) {
+      area.textContent = "現在、受験可能な試験はありません。";
+    } else {
       exams.forEach(exam => {
         const card = document.createElement("div");
         card.className = "exam-card";
@@ -598,12 +622,10 @@ async function loadHome() {
         meta.className = "exam-meta";
 
         const duration = document.createElement("span");
-        duration.textContent =
-          "制限時間：" + exam.duration_minutes + "分";
+        duration.textContent = "制限時間：" + exam.duration_minutes + "分";
 
         const count = document.createElement("span");
-        count.textContent =
-          "問題数：" + exam.total_questions + "問";
+        count.textContent = "問題数：" + exam.total_questions + "問";
 
         meta.append(duration, count);
 
@@ -616,49 +638,39 @@ async function loadHome() {
       });
     }
 
-    // 公開前の試験
+    // 公開予定の試験
     const plannedExams = [
       {
-        title: "オルビステスト総合問題４",
-        date: "公開予定：2026年11月19日",
-        status: "公開準備中",
-        statusClass: "planned",
-        message: "現在、この試験は開発中です。公開予定日は2026年11月19日です。"
+        title:"オルビステスト総合問題４",
+        date:"公開予定：2026年11月19日",
+        status:"公開準備中",
+        planned:true
       },
       {
-        title: "オルビステスト総合問題５",
-        date: "公開日未定",
-        status: "順次開発中",
-        statusClass: "",
-        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+        title:"オルビステスト総合問題５",
+        date:"公開日未定",
+        status:"順次開発中"
       },
       {
-        title: "オルビステスト総合問題６",
-        date: "公開日未定",
-        status: "順次開発中",
-        statusClass: "",
-        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+        title:"オルビステスト総合問題６",
+        date:"公開日未定",
+        status:"順次開発中"
       },
       {
-        title: "オルビスM3",
-        date: "公開予定：2026年12月2日",
-        status: "公開準備中",
-        statusClass: "planned",
-        message: "現在、この試験は開発中です。公開予定日は2026年12月2日です。"
+        title:"オルビスM3",
+        date:"公開予定：2026年12月2日",
+        status:"公開準備中",
+        planned:true
       },
       {
-        title: "オルビスM4",
-        date: "公開日未定",
-        status: "順次開発中",
-        statusClass: "",
-        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+        title:"オルビスM4",
+        date:"公開日未定",
+        status:"順次開発中"
       },
       {
-        title: "オルビスM5",
-        date: "公開日未定",
-        status: "順次開発中",
-        statusClass: "",
-        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+        title:"オルビスM5",
+        date:"公開日未定",
+        status:"順次開発中"
       }
     ];
 
@@ -671,7 +683,7 @@ async function loadHome() {
 
       const status = document.createElement("span");
       status.className = "exam-status" +
-        (exam.statusClass ? " " + exam.statusClass : "");
+        (exam.planned ? " planned" : "");
       status.textContent = exam.status;
 
       const date = document.createElement("p");
@@ -679,19 +691,18 @@ async function loadHome() {
       date.textContent = exam.date;
 
       const button = document.createElement("button");
-      button.type = "button";
       button.textContent = "詳細・公開状況を確認";
       button.addEventListener("click", () => {
-        alert(exam.message);
+        alert(
+          exam.title + "\n" + exam.status +
+          "\n" + exam.date +
+          "\n現在、この試験は開発中です。"
+        );
       });
 
       card.append(title, status, date, button);
       area.appendChild(card);
     });
-
-    if ((!exams || exams.length === 0) && plannedExams.length === 0) {
-      area.textContent = "現在、受験可能な試験はありません。";
-    }
 
     await restoreActiveAttempt(exams || []);
 
@@ -712,7 +723,6 @@ async function restoreActiveAttempt(exams) {
   try {
     const raw = localStorage.getItem(storageKey());
     if (!raw) return;
-
     saved = JSON.parse(raw);
   } catch (error) {
     clearLocalState();
@@ -731,18 +741,13 @@ async function restoreActiveAttempt(exams) {
     return;
   }
 
-  const remainingAnswers =
-    saved.answers && typeof saved.answers === "object"
-      ? saved.answers
-      : {};
-
   setLoading("受験中の試験を復元しています...");
 
   try {
     currentExam = exam;
     currentAttemptId = saved.attemptId;
     deadline = Number(saved.deadline);
-    answers = remainingAnswers;
+    answers = saved.answers || {};
     currentQuestionIndex = 0;
     submitting = false;
 
@@ -807,19 +812,19 @@ async function beginExam(exam) {
     answers = {};
 
     await loadHome();
-
     showExamError("試験を開始できません：" + error.message);
   }
 }
 
 /* =====================================
    11. 問題取得
+   passage_textも取得する
 ===================================== */
 
-  async function loadQuestions(examId) {
+async function loadQuestions(examId) {
   const { data, error } = await db
     .from("questions")
-    .select("id,question_number,question_text,choices,points")
+    .select("id,question_number,question_text,passage_text,choices,points")
     .eq("exam_id", examId)
     .order("question_number");
 
@@ -832,49 +837,52 @@ async function beginExam(exam) {
   questions = data;
 }
 
-
 /* =====================================
    12. 問題表示
+   左：資料・説明文
+   右：問題・回答
 ===================================== */
 
 function renderQuestion() {
   const q = questions[currentQuestionIndex];
-
   if (!q) return;
 
   const area = document.getElementById("questionArea");
   area.replaceChildren();
 
-  // 左右のレイアウト
   const layout = document.createElement("div");
   layout.className = "question-layout";
 
-  // 左側：説明文・読解文
-  const passagePanel = document.createElement("div");
+  // 左側：資料・説明文
+  const passagePanel = document.createElement("section");
   passagePanel.className = "passage-panel";
 
-  const passageTitle = document.createElement("h3");
-  passageTitle.textContent = "資料・説明文";
+  const passageHeading = document.createElement("h3");
+  passageHeading.textContent = "資料・説明文";
 
   const passageContent = document.createElement("div");
+  passageContent.className = "passage-content";
+
   passageContent.textContent =
-    q.passage_text || "この問題に共通の説明文はありません。";
+    q.passage_text && q.passage_text.trim()
+      ? q.passage_text
+      : "この問題に共通の説明文はありません。";
 
-  passagePanel.append(passageTitle, passageContent);
+  passagePanel.append(passageHeading, passageContent);
 
-  // 右側：問題
-  const questionPanel = document.createElement("div");
+  // 右側：問題・回答
+  const questionPanel = document.createElement("section");
   questionPanel.className = "question-panel";
 
   const heading = document.createElement("h3");
   heading.textContent = "問題 " + q.question_number;
 
-  const questionText = document.createElement("p");
+  const questionText = document.createElement("div");
+  questionText.className = "question-text";
   questionText.textContent = q.question_text;
 
   questionPanel.append(heading, questionText);
 
-  // 選択肢
   const saved = answers[q.id] ?? "";
 
   if (Array.isArray(q.choices) && q.choices.length > 0) {
@@ -917,7 +925,6 @@ function renderQuestion() {
   layout.append(passagePanel, questionPanel);
   area.appendChild(layout);
 
-  // 問題番号・進捗表示
   document.getElementById("questionCounter").textContent =
     (currentQuestionIndex + 1) + " / " + questions.length + " 問";
 
@@ -926,7 +933,6 @@ function renderQuestion() {
 
   updateQuestionNav();
 }
-
 
 /* =====================================
    13. 問題番号一覧
@@ -962,8 +968,8 @@ function updateQuestionNav() {
 
 function showQuestionList() {
   document.getElementById("questionNav").scrollIntoView({
-    behavior: "smooth",
-    block: "center"
+    behavior:"smooth",
+    block:"center"
   });
 }
 
@@ -980,8 +986,8 @@ function moveQuestion(direction) {
   renderQuestion();
 
   window.scrollTo({
-    top: 0,
-    behavior: "smooth"
+    top:0,
+    behavior:"smooth"
   });
 }
 
@@ -1058,6 +1064,7 @@ async function submitExam(automatic) {
   clearInterval(timerId);
 
   document.getElementById("submitError").textContent = "";
+
   setLoading(
     automatic
       ? "制限時間終了。回答を自動提出しています..."
@@ -1066,8 +1073,8 @@ async function submitExam(automatic) {
 
   try {
     const { data, error } = await db.rpc("submit_exam", {
-      p_attempt_id: currentAttemptId,
-      p_answers: answers
+      p_attempt_id:currentAttemptId,
+      p_answers:answers
     });
 
     if (error) throw error;
@@ -1100,7 +1107,6 @@ async function submitExam(automatic) {
 
   } catch (error) {
     submitting = false;
-
     showScreen("examScreen");
 
     document.getElementById("submitError").textContent =
@@ -1127,7 +1133,6 @@ async function backHome() {
   submitting = false;
 
   clearInterval(timerId);
-
   await loadHome();
 }
 
