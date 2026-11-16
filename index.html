@@ -88,6 +88,28 @@ button.red { background:#b91c1c; }
   font-size:14px;
 }
 .exam-card button { margin-top:12px; width:100%; }
+
+.exam-status {
+  display:inline-block;
+  margin:0 0 10px;
+  padding:5px 10px;
+  border-radius:999px;
+  background:#fef3c7;
+  color:#92400e;
+  font-size:13px;
+  font-weight:bold;
+}
+.exam-status.planned {
+  background:#e0f2fe;
+  color:#075985;
+}
+.exam-card.development-card {
+  border-style:dashed;
+  background:#fbfdff;
+}
+.exam-card.development-card button {
+  background:#64748b;
+}
 .topbar {
   display:flex;
   justify-content:space-between;
@@ -205,7 +227,6 @@ footer {
 
 <main>
 
-<!-- ログイン画面 -->
 <section id="loginScreen" class="card">
   <h2>受験者ログイン</h2>
   <p class="muted">
@@ -225,7 +246,6 @@ footer {
   <p id="loginError" class="error"></p>
 </section>
 
-<!-- 試験一覧 -->
 <section id="homeScreen" class="hidden">
   <div class="card">
     <div class="topbar">
@@ -239,13 +259,12 @@ footer {
 
   <div class="card">
     <h2>試験一覧</h2>
-    <p>受験する試験を選択してください。</p>
+    <p>受験可能な試験を選択してください。公開前の試験も一覧に掲載しています。</p>
     <div id="examList">試験情報を読み込んでいます。</div>
     <p id="examError" class="error"></p>
   </div>
 </section>
 
-<!-- 受験画面 -->
 <section id="examScreen" class="hidden">
   <div id="timer" class="timer">残り時間 --:--</div>
 
@@ -279,13 +298,11 @@ footer {
   </div>
 </section>
 
-<!-- 処理中 -->
 <section id="loadingScreen" class="card hidden">
   <h2>処理中</h2>
   <p id="loadingMessage">処理しています。</p>
 </section>
 
-<!-- 結果 -->
 <section id="resultScreen" class="card hidden">
   <h2>受験終了</h2>
   <p>回答の提出が完了しました。</p>
@@ -520,45 +537,120 @@ async function loadHome() {
 
     if (error) throw error;
 
-    if (!exams || exams.length === 0) {
-      area.textContent = "現在、受験可能な試験はありません。";
-      return;
-    }
-
     area.replaceChildren();
 
-    exams.forEach(exam => {
+    // データベースに登録済みの試験
+    if (exams && exams.length > 0) {
+      exams.forEach(exam => {
+        const card = document.createElement("div");
+        card.className = "exam-card";
+
+        const title = document.createElement("h3");
+        title.textContent = exam.title;
+
+        const description = document.createElement("p");
+        description.textContent = exam.description || "";
+
+        const meta = document.createElement("div");
+        meta.className = "exam-meta";
+
+        const duration = document.createElement("span");
+        duration.textContent =
+          "制限時間：" + exam.duration_minutes + "分";
+
+        const count = document.createElement("span");
+        count.textContent =
+          "問題数：" + exam.total_questions + "問";
+
+        meta.append(duration, count);
+
+        const button = document.createElement("button");
+        button.textContent = "この試験を受験する";
+        button.addEventListener("click", () => beginExam(exam));
+
+        card.append(title, description, meta, button);
+        area.appendChild(card);
+      });
+    }
+
+    // 公開前の試験
+    const plannedExams = [
+      {
+        title: "オルビステスト総合問題４",
+        date: "公開予定：2026年11月19日",
+        status: "公開準備中",
+        statusClass: "planned",
+        message: "現在、この試験は開発中です。公開予定日は2026年11月19日です。"
+      },
+      {
+        title: "オルビステスト総合問題５",
+        date: "公開日未定",
+        status: "順次開発中",
+        statusClass: "",
+        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+      },
+      {
+        title: "オルビステスト総合問題６",
+        date: "公開日未定",
+        status: "順次開発中",
+        statusClass: "",
+        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+      },
+      {
+        title: "オルビスM3",
+        date: "公開予定：2026年12月2日",
+        status: "公開準備中",
+        statusClass: "planned",
+        message: "現在、この試験は開発中です。公開予定日は2026年12月2日です。"
+      },
+      {
+        title: "オルビスM4",
+        date: "公開日未定",
+        status: "順次開発中",
+        statusClass: "",
+        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+      },
+      {
+        title: "オルビスM5",
+        date: "公開日未定",
+        status: "順次開発中",
+        statusClass: "",
+        message: "現在、この試験は順次開発中です。公開までお待ちください。"
+      }
+    ];
+
+    plannedExams.forEach(exam => {
       const card = document.createElement("div");
-      card.className = "exam-card";
+      card.className = "exam-card development-card";
 
       const title = document.createElement("h3");
       title.textContent = exam.title;
 
-      const description = document.createElement("p");
-      description.textContent = exam.description || "";
+      const status = document.createElement("span");
+      status.className = "exam-status" +
+        (exam.statusClass ? " " + exam.statusClass : "");
+      status.textContent = exam.status;
 
-      const meta = document.createElement("div");
-      meta.className = "exam-meta";
-
-      const duration = document.createElement("span");
-      duration.textContent =
-        "制限時間：" + exam.duration_minutes + "分";
-
-      const count = document.createElement("span");
-      count.textContent =
-        "問題数：" + exam.total_questions + "問";
-
-      meta.append(duration, count);
+      const date = document.createElement("p");
+      date.className = "muted";
+      date.textContent = exam.date;
 
       const button = document.createElement("button");
-      button.textContent = "この試験を受験する";
-      button.addEventListener("click", () => beginExam(exam));
+      button.type = "button";
+      button.textContent = "詳細・公開状況を確認";
+      button.addEventListener("click", () => {
+        alert(exam.message);
+      });
 
-      card.append(title, description, meta, button);
+      card.append(title, status, date, button);
       area.appendChild(card);
     });
 
-    await restoreActiveAttempt(exams);
+    if ((!exams || exams.length === 0) && plannedExams.length === 0) {
+      area.textContent = "現在、受験可能な試験はありません。";
+    }
+
+    await restoreActiveAttempt(exams || []);
 
   } catch (error) {
     area.textContent = "";
@@ -994,7 +1086,6 @@ document.getElementById("submitButton")
 document.getElementById("backHomeButton")
   .addEventListener("click", backHome);
 
-/* Enterキーでログイン */
 document.getElementById("password")
   .addEventListener("keydown", event => {
     if (event.key === "Enter") login();
