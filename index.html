@@ -1,4 +1,3 @@
-
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -155,10 +154,8 @@ main{max-width:none;margin:0;padding:0}
 <tr><th>受験日時</th><td id="printExamDate">-</td></tr>
 <tr><th>問題数</th><td id="printQuestionCount">-</td></tr>
 <tr><th>正答数</th><td id="printCorrectCount">-</td></tr>
-<tr><th>正答率</th><td id="printScore">-</td></tr>
+<tr><th>得点（100点満点）</th><td id="printScore">-</td></tr>
 <tr><th>参考平均点</th><td id="printAverage">-</td></tr>
-<tr><th>参考最高点</th><td id="printHigh">-</td></tr>
-<tr><th>参考最低点</th><td id="printLow">-</td></tr>
 <tr><th>平均点との差</th><td id="printDifference">-</td></tr>
 </tbody></table>
 <div id="printScoreLarge" class="print-score"></div>
@@ -173,6 +170,7 @@ main{max-width:none;margin:0;padding:0}
 
 <script>
 "use strict";
+
 const SUPABASE_URL="https://hxrtpftlklgwesvanlpk.supabase.co";
 const SUPABASE_KEY="sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
 const db=window.supabase?window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY):null;
@@ -187,15 +185,11 @@ function storageKey(){return currentUser?"orbis_cbt_attempt_"+currentUser.id:nul
 function saveLocalState(){
 if(!currentUser||!currentAttemptId||!currentExam)return;
 const state={attemptId:currentAttemptId,examId:currentExam.id,deadline,answers,savedAt:Date.now()};
-try{localStorage.setItem(storageKey(),JSON.stringify(state));}
-catch(error){console.error("回答保存エラー",error);}
+try{localStorage.setItem(storageKey(),JSON.stringify(state));}catch(error){console.error("回答保存エラー",error);}
 }
-function clearLocalState(){
-if(!currentUser)return;
-try{localStorage.removeItem(storageKey());}catch(error){console.error(error);}
-}
+function clearLocalState(){if(!currentUser)return;try{localStorage.removeItem(storageKey());}catch(error){console.error(error);}}
 function showScreen(id){
-["loginScreen","homeScreen","examScreen","loadingScreen","resultScreen"].forEach(screen=>document.getElementById(screen).classList.add("hidden"));
+["loginScreen","homeScreen","examScreen","loadingScreen","resultScreen"].forEach(s=>document.getElementById(s).classList.add("hidden"));
 document.getElementById(id).classList.remove("hidden");
 }
 function setLoading(message){document.getElementById("loadingMessage").textContent=message;showScreen("loadingScreen");}
@@ -224,8 +218,7 @@ if(currentAttemptId&&!submitting){alert("受験中はログアウトできませ
 if(!confirm("ログアウトしますか？"))return;
 const{error}=await db.auth.signOut();
 if(error){alert("ログアウトに失敗しました："+error.message);return;}
-currentUser=null;currentExam=null;currentAttemptId=null;
-showScreen("loginScreen");
+currentUser=null;currentExam=null;currentAttemptId=null;showScreen("loginScreen");
 }
 
 async function initialize(){
@@ -245,7 +238,7 @@ currentMember={full_name:"",member_number:""};
 try{
 const{data:member,error:memberError}=await db.from("members").select("full_name,member_number").eq("id",currentUser.id).maybeSingle();
 if(!memberError&&member)currentMember=member;
-}catch(memberLoadError){console.warn("受験者情報を取得できませんでした",memberLoadError);}
+}catch(error){console.warn("受験者情報を取得できませんでした",error);}
 const area=document.getElementById("examList");
 const errorBox=document.getElementById("examError");
 area.textContent="試験情報を読み込んでいます...";
@@ -292,8 +285,7 @@ await restoreActiveAttempt(exams||[]);
 
 async function restoreActiveAttempt(exams){
 let saved;
-try{const raw=localStorage.getItem(storageKey());if(!raw)return;saved=JSON.parse(raw);}
-catch(error){clearLocalState();return;}
+try{const raw=localStorage.getItem(storageKey());if(!raw)return;saved=JSON.parse(raw);}catch(error){clearLocalState();return;}
 if(!saved||!saved.attemptId||!saved.examId||!saved.deadline){clearLocalState();return;}
 const exam=exams.find(item=>item.id===saved.examId);
 if(!exam){clearLocalState();return;}
@@ -314,10 +306,8 @@ try{
 const{data,error}=await db.rpc("start_exam",{p_exam_code:exam.exam_code});
 if(error)throw error;
 if(!data)throw new Error("受験開始情報を取得できません。");
-currentExam=exam;currentAttemptId=data;
-deadline=Date.now()+exam.duration_minutes*60*1000;
-answers={};currentQuestionIndex=0;submitting=false;
-saveLocalState();
+currentExam=exam;currentAttemptId=data;deadline=Date.now()+exam.duration_minutes*60*1000;
+answers={};currentQuestionIndex=0;submitting=false;saveLocalState();
 await loadQuestions(exam.id);
 document.getElementById("activeExamTitle").textContent=exam.title;
 showScreen("examScreen");renderQuestion();startTimer();
@@ -351,8 +341,7 @@ const saved=answers[q.id]??"";
 if(Array.isArray(q.choices)&&q.choices.length>0){
 q.choices.forEach(choice=>{
 const label=document.createElement("label");label.className="choice";
-const input=document.createElement("input");input.type="radio";input.name="currentAnswer";
-input.value=String(choice);input.checked=String(saved)===String(choice);
+const input=document.createElement("input");input.type="radio";input.name="currentAnswer";input.value=String(choice);input.checked=String(saved)===String(choice);
 input.addEventListener("change",()=>{answers[q.id]=String(choice);saveLocalState();updateQuestionNav();});
 const span=document.createElement("span");span.textContent=String(choice);
 label.append(input,span);questionPanel.appendChild(label);
@@ -386,15 +375,11 @@ currentQuestionIndex=next;renderQuestion();window.scrollTo({top:0,behavior:"smoo
 
 function startTimer(){
 clearInterval(timerId);updateTimer();
-timerId=setInterval(()=>{
-updateTimer();
-if(Date.now()>=deadline){clearInterval(timerId);submitExam(true);}
-},500);
+timerId=setInterval(()=>{updateTimer();if(Date.now()>=deadline){clearInterval(timerId);submitExam(true);}},500);
 }
 function updateTimer(){
 if(!deadline)return;
-const remaining=Math.max(0,deadline-Date.now());
-const totalSeconds=Math.ceil(remaining/1000);
+const remaining=Math.max(0,deadline-Date.now()),totalSeconds=Math.ceil(remaining/1000);
 const minutes=Math.floor(totalSeconds/60),seconds=totalSeconds%60;
 const timer=document.getElementById("timer");
 timer.textContent="残り時間 "+String(minutes).padStart(2,"0")+":"+String(seconds).padStart(2,"0");
@@ -404,22 +389,15 @@ timer.classList.toggle("warning",remaining<=5*60*1000);
 function confirmSubmit(){
 if(submitting)return;
 const unanswered=questions.filter(q=>answers[q.id]===undefined||String(answers[q.id]).trim()==="").length;
-const message="試験を提出しますか？\n未回答："+unanswered+"問\n提出後は回答を変更できません。";
-if(confirm(message))submitExam(false);
+if(confirm("試験を提出しますか？\n未回答："+unanswered+"問\n提出後は回答を変更できません。"))submitExam(false);
 }
 
 function seededNumber(seed,min,max,salt){
 let h=2166136261;const str=String(seed)+"|"+salt;
 for(let i=0;i<str.length;i++){h^=str.charCodeAt(i);h=Math.imul(h,16777619);}
-const n=(h>>>0)/4294967295;
-return Math.floor(min+n*(max-min+1));
+return Math.floor(min+(h>>>0)/4294967295*(max-min+1));
 }
-function getReferenceStats(examId){
-const average=seededNumber(examId,60,80,"average");
-const high=Math.max(average+5,seededNumber(examId,85,100,"high"));
-const low=Math.min(average-5,seededNumber(examId,20,45,"low"));
-return{average,high:Math.min(100,high),low:Math.max(0,low)};
-}
+function getReferenceStats(examId){return{average:seededNumber(examId,60,80,"average")};}
 function getPerformanceComment(score){
 if(score>=90)return"非常に素晴らしい結果です。これまで積み重ねてきた努力が、今回の得点にしっかり表れています。難しい問題にも粘り強く取り組めたことは大きな成果です。今の理解度に満足せず、間違えた問題や迷った問題も確認し、さらに高い目標に挑戦していきましょう。今後のさらなる成長を期待しています。";
 if(score>=80)return"よく頑張りました。基礎的な理解に加えて、応用的な内容にも対応できているようです。今回正解できた問題は自信につなげ、惜しくも間違えた問題は解き方を振り返ってみましょう。あと一歩の確認を積み重ねることで、次回はさらに安定した結果につながります。引き続き努力を続けてください。";
@@ -450,10 +428,9 @@ submittedAt:new Date().toLocaleString("ja-JP",{timeZone:"Asia/Tokyo"}),
 fullName:currentMember.full_name||currentUser?.user_metadata?.full_name||"氏名未登録",
 memberNumber:currentMember.member_number||"受験番号未登録"
 };
-clearLocalState();currentAttemptId=null;currentExam=null;deadline=null;
-questions=[];answers={};submitting=false;
+clearLocalState();currentAttemptId=null;currentExam=null;deadline=null;questions=[];answers={};submitting=false;
 showScreen("resultScreen");
-document.getElementById("resultMessage").textContent="正答数："+correctCount+"問";
+document.getElementById("resultMessage").textContent="得点："+resultSnapshot.score+"点／100点";
 renderPrintableResult();renderVisibleResult();
 }catch(error){
 submitting=false;showScreen("examScreen");
@@ -465,34 +442,29 @@ if(deadline&&Date.now()>=deadline)document.getElementById("timer").textContent="
 function renderVisibleResult(){
 if(!resultSnapshot)return;
 const r=resultSnapshot,diff=r.score-r.reference.average;
-const comment=getPerformanceComment(r.score);
-document.getElementById("resultSummary").textContent=`受験者：${r.fullName}（受験番号：${r.memberNumber}）／正答率：${r.score}%／参考平均点：${r.reference.average}点／平均点との差：${diff>=0?"+":""}${diff}点`;
-document.getElementById("resultComment").textContent="講評："+comment;
+document.getElementById("resultSummary").textContent=`受験者：${r.fullName}（受験番号：${r.memberNumber}）／得点：${r.score}点／100点／参考平均点：${r.reference.average}点／平均点との差：${diff>=0?"+":""}${diff}点`;
+document.getElementById("resultComment").textContent="講評："+getPerformanceComment(r.score);
 }
 function renderPrintableResult(){
 if(!resultSnapshot)return;
 const r=resultSnapshot,diff=r.score-r.reference.average;
-const comment=getPerformanceComment(r.score);
 document.getElementById("printStudentName").textContent=r.fullName;
 document.getElementById("printStudentNumber").textContent=r.memberNumber;
 document.getElementById("printExamTitle").textContent=r.examTitle;
 document.getElementById("printExamDate").textContent=r.submittedAt;
 document.getElementById("printQuestionCount").textContent=r.questionCount+"問";
 document.getElementById("printCorrectCount").textContent=r.correctCount+"問";
-document.getElementById("printScore").textContent=r.score+"%";
-document.getElementById("printAverage").textContent=r.reference.average+"点";
+document.getElementById("printScore").textContent=r.score+"点／100点";
+document.getElementById("printAverage").textContent=r.reference.average+"点（参考）";
 document.getElementById("printDifference").textContent=(diff>=0?"+":"")+diff+"点";
-document.getElementById("printScoreLarge").textContent=`正答数 ${r.correctCount} / ${r.questionCount}問（正答率 ${r.score}%）`;
-document.getElementById("printComment").textContent="講評："+comment;
+document.getElementById("printScoreLarge").textContent=`${r.score}点／100点（正答数 ${r.correctCount} / ${r.questionCount}問）`;
+document.getElementById("printComment").textContent="講評："+getPerformanceComment(r.score);
 }
-function printResult(){
-if(!resultSnapshot){alert("印刷する成績データがありません。");return;}
-renderPrintableResult();window.print();
-}
+function printResult(){if(!resultSnapshot){alert("印刷する成績データがありません。");return;}renderPrintableResult();window.print();}
+
 async function backHome(){
-currentExam=null;currentAttemptId=null;deadline=null;
-questions=[];answers={};submitting=false;clearInterval(timerId);
-await loadHome();
+currentExam=null;currentAttemptId=null;deadline=null;questions=[];answers={};submitting=false;
+clearInterval(timerId);await loadHome();
 }
 
 document.getElementById("loginButton").addEventListener("click",login);
