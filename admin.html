@@ -42,14 +42,9 @@ body{background:#fff}
 header,#loginCard,.no-print{display:none!important}
 main{max-width:none;margin:0;padding:0}
 .card{box-shadow:none;border:0;padding:0}
-.print-heading{display:block!important}
 table{font-size:10px}
 th,td{font-size:10px;padding:6px}
-.print-only{display:block!important}
-.print-break{page-break-before:always}
 }
-.print-only{display:none}
-.print-heading{display:none}
 </style>
 </head>
 <body>
@@ -77,7 +72,9 @@ th,td{font-size:10px;padding:6px}
 <button class="secondary" onclick="logout()">ログアウト</button>
 </div>
 </div>
-<div class="toolbar"><button class="green" onclick="printList()">成績一覧を印刷</button></div>
+<div class="toolbar">
+<button class="green" onclick="printList()">成績一覧を印刷</button>
+</div>
 </div>
 
 <div class="card stats">
@@ -89,7 +86,9 @@ th,td{font-size:10px;padding:6px}
 <div class="card no-print">
 <h2>絞り込み</h2>
 <label>試験</label>
-<select id="examFilter" onchange="renderResults()"><option value="">すべての試験</option></select>
+<select id="examFilter" onchange="renderResults()">
+<option value="">すべての試験</option>
+</select>
 <label>受験者検索（受験番号・氏名）</label>
 <input id="memberFilter" placeholder="検索する文字を入力" oninput="renderResults()">
 </div>
@@ -100,25 +99,37 @@ th,td{font-size:10px;padding:6px}
 <table>
 <thead>
 <tr>
-<th>受験番号</th><th>氏名</th><th>試験</th><th>正答数</th><th>得点</th><th>参考平均点</th><th>平均差</th><th>状態</th><th class="no-print">操作</th>
+<th>受験番号</th>
+<th>氏名</th>
+<th>試験</th>
+<th>正答数</th>
+<th>得点（100点満点）</th>
+<th>参考平均点</th>
+<th>平均差</th>
+<th>状態</th>
+<th class="no-print">操作</th>
 </tr>
 </thead>
 <tbody id="resultsBody"></tbody>
 </table>
 </div>
 <div id="emptyMessage" class="small"></div>
-<p class="stats-note">※参考平均点・参考最高点・参考最低点は、試験ごとにランダム生成した固定の参考値です。実際の受験者全員の集計値ではありません。</p>
+<p class="stats-note">※参考平均点は試験ごとにランダム生成した固定の参考値です。実際の受験者全員の集計値ではありません。</p>
 </div>
 </section>
 </main>
 
 <script>
 "use strict";
+
 const SUPABASE_URL="https://hxrtpftlklgwesvanlpk.supabase.co";
 const SUPABASE_KEY="sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
 const ADMIN_ID="4f0efa53-d67b-4d73-9b28-908eadc20525";
 const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
-let attempts=[],questions=[],filteredAttempts=[];
+
+let attempts=[];
+let questions=[];
+let filteredAttempts=[];
 
 function escapeHTML(v){
 return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
@@ -126,22 +137,23 @@ return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'
 function showMessage(t){document.getElementById("message").textContent=t;}
 
 function seededNumber(seed,min,max,salt){
-let h=2166136261;const s=String(seed)+"|"+salt;
+let h=2166136261;
+const s=String(seed)+"|"+salt;
 for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
 return Math.floor(min+(h>>>0)/4294967295*(max-min+1));
 }
 function referenceStats(examId){
-const avg=seededNumber(examId,60,80,"average");
-const high=Math.max(avg+5,seededNumber(examId,85,100,"high"));
-const low=Math.min(avg-5,seededNumber(examId,20,45,"low"));
-return{average:avg,high:Math.min(100,high),low:Math.max(0,low)};
+return{average:seededNumber(examId,60,80,"average")};
 }
+
+/* 100点満点に換算 */
 function scoreFor(a){
 const qs=questions.filter(q=>q.exam_id===a.exam_id);
 const total=qs.length||Number(a.total_questions)||0;
 if(!total||a.correct_count==null)return null;
 return Math.round(Number(a.correct_count)/total*100);
 }
+
 function commentFor(score){
 if(score>=90)return"非常に素晴らしい結果です。これまで積み重ねてきた努力が、今回の得点にしっかり表れています。間違えた問題や迷った問題も確認し、さらに高い目標に挑戦していきましょう。今後のさらなる成長を期待しています。";
 if(score>=80)return"よく頑張りました。基礎から応用まで、学習の成果が表れています。正解できた問題は自信につなげ、惜しくも間違えた問題は解き方を振り返りましょう。あと一歩の確認を積み重ね、次回はさらに安定した結果を目指してください。";
@@ -155,7 +167,8 @@ const email=document.getElementById("email").value.trim();
 const password=document.getElementById("password").value;
 const btn=document.getElementById("loginBtn");
 if(!email||!password){showMessage("メールアドレスとパスワードを入力してください。");return;}
-btn.disabled=true;showMessage("ログインしています...");
+btn.disabled=true;
+showMessage("ログインしています...");
 try{
 const{error}=await db.auth.signInWithPassword({email,password});
 if(error)throw error;
@@ -185,58 +198,105 @@ questions=data?.questions||[];
 document.getElementById("totalCount").textContent=attempts.length;
 document.getElementById("submittedCount").textContent=attempts.filter(a=>a.submitted_at||a.status==="submitted").length;
 document.getElementById("ongoingCount").textContent=attempts.filter(a=>!a.submitted_at&&a.status!=="submitted").length;
-const f=document.getElementById("examFilter"),old=f.value,map=new Map();
+
+const f=document.getElementById("examFilter");
+const old=f.value;
+const map=new Map();
 attempts.forEach(a=>map.set(a.exam_code,a.exam_title));
 f.innerHTML='<option value="">すべての試験</option>';
 map.forEach((title,code)=>{
-const o=document.createElement("option");o.value=code||"";
-o.textContent=title||code||"試験名不明";f.appendChild(o);
+const o=document.createElement("option");
+o.value=code||"";
+o.textContent=title||code||"試験名不明";
+f.appendChild(o);
 });
-f.value=old;renderResults();
+f.value=old;
+renderResults();
 }
 
 function renderResults(){
 const exam=document.getElementById("examFilter").value;
 const keyword=document.getElementById("memberFilter").value.trim().toLowerCase();
-filteredAttempts=attempts.filter(a=>(!exam||a.exam_code===exam)&&(`${a.member_number||""} ${a.full_name||""}`).toLowerCase().includes(keyword));
-const body=document.getElementById("resultsBody");body.replaceChildren();
+filteredAttempts=attempts.filter(a=>
+(!exam||a.exam_code===exam)&&
+(`${a.member_number||""} ${a.full_name||""}`).toLowerCase().includes(keyword)
+);
+
+const body=document.getElementById("resultsBody");
+body.replaceChildren();
 document.getElementById("emptyMessage").textContent=filteredAttempts.length?"":"該当する受験記録はありません。";
+
 filteredAttempts.forEach((a,i)=>{
 const submitted=!!a.submitted_at||a.status==="submitted";
-const score=scoreFor(a),stats=referenceStats(a.exam_id||a.exam_code||a.exam_title);
+const score=scoreFor(a);
+const stats=referenceStats(a.exam_id||a.exam_code||a.exam_title);
 const diff=score==null?null:score-stats.average;
+
 const tr=document.createElement("tr");
-tr.innerHTML=`<td>${escapeHTML(a.member_number||"-")}</td><td>${escapeHTML(a.full_name||"氏名不明")}</td><td>${escapeHTML(a.exam_title||"-")}</td><td>${escapeHTML(a.correct_count??"-")}</td><td>${score==null?"-":score+"点"}</td><td>${stats.average}点</td><td>${diff==null?"-":(diff>=0?"+":"")+diff+"点"}</td><td>${submitted?"提出済み":"受験中"}</td><td class="no-print"><button onclick="toggleDetail(${i})">詳細</button><button class="green" onclick="printIndividual(${i})">個人票印刷</button></td>`;
+tr.innerHTML=`
+<td>${escapeHTML(a.member_number||"-")}</td>
+<td>${escapeHTML(a.full_name||"氏名不明")}</td>
+<td>${escapeHTML(a.exam_title||"-")}</td>
+<td>${escapeHTML(a.correct_count??"-")}</td>
+<td>${score==null?"-":score+"点／100点"}</td>
+<td>${stats.average}点</td>
+<td>${diff==null?"-":(diff>=0?"+":"")+diff+"点"}</td>
+<td>${submitted?"提出済み":"受験中"}</td>
+<td class="no-print">
+<button onclick="toggleDetail(${i})">詳細</button>
+<button class="green" onclick="printIndividual(${i})">個人票印刷</button>
+</td>`;
 body.appendChild(tr);
-const dr=document.createElement("tr");dr.id="detail-"+i;dr.className="hidden";
-const td=document.createElement("td");td.colSpan=9;td.innerHTML=detailHTML(a,score,stats);
-dr.appendChild(td);body.appendChild(dr);
+
+const dr=document.createElement("tr");
+dr.id="detail-"+i;
+dr.className="hidden";
+const td=document.createElement("td");
+td.colSpan=9;
+td.innerHTML=detailHTML(a,score,stats);
+dr.appendChild(td);
+body.appendChild(dr);
 });
 }
 
-function toggleDetail(i){document.getElementById("detail-"+i).classList.toggle("hidden");}
+function toggleDetail(i){
+document.getElementById("detail-"+i).classList.toggle("hidden");
+}
 function formatDate(v){
 if(!v)return"未提出";
-const d=new Date(v);return isNaN(d.getTime())?"-":d.toLocaleString("ja-JP");
+const d=new Date(v);
+return isNaN(d.getTime())?"-":d.toLocaleString("ja-JP");
 }
-function getAnswerMap(a){return a.answers&&typeof a.answers==="object"?a.answers:{};}
+function getAnswerMap(a){
+return a.answers&&typeof a.answers==="object"?a.answers:{};
+}
 function selectedAnswer(a,q){
-const ans=getAnswerMap(a);let v=ans[q.question_id||q.id];
+const ans=getAnswerMap(a);
+let v=ans[q.question_id||q.id];
 if(v===undefined)v=ans[String(q.question_number)];
 if(v===undefined)v=ans[q.question_number-1];
 if(v&&typeof v==="object")v=v.answer??v.selected??v.value??JSON.stringify(v);
 return v;
 }
+
 function renderAnswerList(a){
 const qs=questions.filter(q=>q.exam_id===a.exam_id).sort((x,y)=>x.question_number-y.question_number);
 if(!qs.length)return`<pre>${escapeHTML(JSON.stringify(a.answers||{},null,2))}</pre>`;
 return qs.map(q=>{
-const sel=selectedAnswer(a,q),correct=q.correct_answer;
+const sel=selectedAnswer(a,q);
+const correct=q.correct_answer;
 const answered=sel!==undefined&&sel!==null&&sel!=="";
 const ok=answered&&String(sel)===String(correct);
-return`<div class="answer"><b>第${escapeHTML(q.question_number)}問</b><p>${escapeHTML(q.question_text||"")}</p><p>受験者の回答：${answered?escapeHTML(sel):"未回答"}</p><p>正解：${escapeHTML(correct??"未設定")}</p><p class="${ok?"good":"bad"}">${!answered?"未回答":ok?"正解":"不正解"}</p></div>`;
+return`<div class="answer">
+<b>第${escapeHTML(q.question_number)}問</b>
+<p>${escapeHTML(q.question_text||"")}</p>
+<p>受験者の回答：${answered?escapeHTML(sel):"未回答"}</p>
+<p>正解：${escapeHTML(correct??"未設定")}</p>
+<p class="${ok?"good":"bad"}">${!answered?"未回答":ok?"正解":"不正解"}</p>
+</div>`;
 }).join("");
 }
+
 function detailHTML(a,score,stats){
 const diff=score==null?null:score-stats.average;
 return`<div class="card">
@@ -246,11 +306,12 @@ return`<div class="card">
 <p><b>開始：</b>${escapeHTML(formatDate(a.started_at))}</p>
 <p><b>提出：</b>${escapeHTML(formatDate(a.submitted_at))}</p>
 <p><b>正答数：</b>${escapeHTML(a.correct_count??"-")}</p>
-<p><b>得点：</b>${score==null?"-":score+"点"}</p>
-<p><b>参考平均点：</b>${stats.average}点　<b>参考最高点：</b>${stats.high}点　<b>参考最低点：</b>${stats.low}点</p>
+<p><b>得点：</b>${score==null?"-":score+"点／100点"}</p>
+<p><b>参考平均点：</b>${stats.average}点</p>
 <p><b>平均点との差：</b>${diff==null?"-":(diff>=0?"+":"")+diff+"点"}</p>
 <div class="comment"><b>講評</b><br>${score==null?"提出後に採点結果が表示されます。":commentFor(score)}</div>
-<h3>回答内容</h3>${renderAnswerList(a)}
+<h3>回答内容</h3>
+${renderAnswerList(a)}
 </div>`;
 }
 
@@ -259,19 +320,39 @@ const rows=filteredAttempts.filter(a=>a.submitted_at||a.status==="submitted");
 if(!rows.length){alert("印刷できる提出済み成績がありません。");return;}
 const w=window.open("","_blank");
 if(!w){alert("印刷画面が開けません。ポップアップを許可してください。");return;}
-w.document.write(printDocument("オルビステスト 成績一覧",`<table><thead><tr><th>受験番号</th><th>氏名</th><th>試験</th><th>正答数</th><th>得点</th><th>参考平均</th><th>平均差</th><th>提出日時</th></tr></thead><tbody>${rows.map(a=>{
-const sc=scoreFor(a),st=referenceStats(a.exam_id||a.exam_code||a.exam_title);
+w.document.write(printDocument("オルビステスト 成績一覧",`
+<table><thead><tr>
+<th>受験番号</th><th>氏名</th><th>試験</th><th>正答数</th>
+<th>得点（100点満点）</th><th>参考平均</th><th>平均差</th><th>提出日時</th>
+</tr></thead><tbody>
+${rows.map(a=>{
+const sc=scoreFor(a);
+const st=referenceStats(a.exam_id||a.exam_code||a.exam_title);
 const d=sc==null?"-":(sc-st.average>=0?"+":"")+(sc-st.average);
-return`<tr><td>${escapeHTML(a.member_number||"-")}</td><td>${escapeHTML(a.full_name||"-")}</td><td>${escapeHTML(a.exam_title||"-")}</td><td>${escapeHTML(a.correct_count??"-")}</td><td>${sc==null?"-":sc+"点"}</td><td>${st.average}点</td><td>${d}</td><td>${escapeHTML(formatDate(a.submitted_at))}</td></tr>`;
-}).join("")}</tbody></table>`));
-w.document.close();w.focus();w.print();
+return`<tr>
+<td>${escapeHTML(a.member_number||"-")}</td>
+<td>${escapeHTML(a.full_name||"-")}</td>
+<td>${escapeHTML(a.exam_title||"-")}</td>
+<td>${escapeHTML(a.correct_count??"-")}</td>
+<td>${sc==null?"-":sc+"点／100点"}</td>
+<td>${st.average}点</td><td>${d}</td>
+<td>${escapeHTML(formatDate(a.submitted_at))}</td>
+</tr>`;
+}).join("")}
+</tbody></table>`));
+w.document.close();
+w.focus();
+w.print();
 }
 
 function printIndividual(index){
-const a=filteredAttempts[index];if(!a)return;
-const sc=scoreFor(a),st=referenceStats(a.exam_id||a.exam_code||a.exam_title);
+const a=filteredAttempts[index];
+if(!a)return;
+const sc=scoreFor(a);
+const st=referenceStats(a.exam_id||a.exam_code||a.exam_title);
 const d=sc==null?"-":(sc-st.average>=0?"+":"")+(sc-st.average)+"点";
-const html=`<h2>受験者成績個人票</h2>
+const html=`
+<h2>受験者成績個人票</h2>
 <table><tbody>
 <tr><th>受験番号</th><td>${escapeHTML(a.member_number||"-")}</td></tr>
 <tr><th>氏名</th><td>${escapeHTML(a.full_name||"-")}</td></tr>
@@ -279,22 +360,25 @@ const html=`<h2>受験者成績個人票</h2>
 <tr><th>開始日時</th><td>${escapeHTML(formatDate(a.started_at))}</td></tr>
 <tr><th>提出日時</th><td>${escapeHTML(formatDate(a.submitted_at))}</td></tr>
 <tr><th>正答数</th><td>${escapeHTML(a.correct_count??"-")}</td></tr>
-<tr><th>得点</th><td>${sc==null?"-":sc+"点"}</td></tr>
+<tr><th>得点（100点満点）</th><td>${sc==null?"-":sc+"点／100点"}</td></tr>
 <tr><th>参考平均点</th><td>${st.average}点</td></tr>
-<tr><th>参考最高点</th><td>${st.high}点</td></tr>
-<tr><th>参考最低点</th><td>${st.low}点</td></tr>
 <tr><th>平均点との差</th><td>${d}</td></tr>
 </tbody></table>
 <div class="comment"><b>講評</b><br>${sc==null?"採点結果はまだありません。":commentFor(sc)}</div>
-<h3>回答内容・正誤</h3>${renderAnswerList(a)}`;
+<h3>回答内容・正誤</h3>
+${renderAnswerList(a)}`;
+
 const w=window.open("","_blank");
 if(!w){alert("印刷画面が開けません。ポップアップを許可してください。");return;}
 w.document.write(printDocument("オルビステスト 成績表",html));
-w.document.close();w.focus();w.print();
+w.document.close();
+w.focus();
+w.print();
 }
 
 function printDocument(title,body){
-return`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>${escapeHTML(title)}</title>
+return`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8">
+<title>${escapeHTML(title)}</title>
 <style>
 body{font-family:Arial,"Noto Sans JP",sans-serif;color:#111;padding:20px}
 h1{text-align:center;font-size:22px}
@@ -314,7 +398,10 @@ ${body}
 </body></html>`;
 }
 
-async function logout(){await db.auth.signOut();location.reload();}
+async function logout(){
+await db.auth.signOut();
+location.reload();
+}
 async function initialize(){
 const{data:{session}}=await db.auth.getSession();
 if(session)await checkAdmin();
@@ -325,7 +412,9 @@ document.getElementById("dashboard").classList.add("hidden");
 document.getElementById("loginCard").classList.remove("hidden");
 }
 });
-document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
+document.getElementById("password").addEventListener("keydown",e=>{
+if(e.key==="Enter")login();
+});
 initialize();
 </script>
 </body>
