@@ -1,3 +1,4 @@
+
 <!DOCTYPE html>
 <html lang="ja">
 <head>
@@ -22,16 +23,22 @@ body {
 header {
   background: #172554;
   color: white;
-  padding: 20px;
+  padding: 22px;
 }
 
 header h1 {
   margin: 0;
-  font-size: 22px;
+  font-size: 23px;
+}
+
+header p {
+  margin: 7px 0 0;
+  color: #dbeafe;
+  font-size: 13px;
 }
 
 main {
-  max-width: 1250px;
+  max-width: 1350px;
   margin: 25px auto;
   padding: 0 15px;
 }
@@ -49,13 +56,44 @@ h2 {
   margin-top: 0;
 }
 
-input, select {
+h3 {
+  font-size: 17px;
+  margin-top: 24px;
+}
+
+label {
+  display: block;
+  font-weight: bold;
+  font-size: 14px;
+  margin: 10px 0 5px;
+}
+
+input,
+select,
+textarea {
+  display: block;
   width: 100%;
   padding: 12px;
-  border: 1px solid #cbd5e1;
+  border: 2px solid #cbd5e1;
   border-radius: 8px;
-  margin: 7px 0 14px;
-  font-size: 16px;
+  background: white;
+  color: #172033;
+  font-size: 15px;
+  margin: 5px 0 14px;
+}
+
+input:focus,
+select:focus,
+textarea:focus {
+  outline: none;
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px #2563eb20;
+}
+
+textarea {
+  min-height: 130px;
+  resize: vertical;
+  line-height: 1.7;
 }
 
 button {
@@ -69,6 +107,15 @@ button {
   margin: 3px;
 }
 
+button:hover {
+  opacity: 0.88;
+}
+
+button:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
 button.secondary {
   background: #475569;
 }
@@ -77,12 +124,20 @@ button.green {
   background: #0f766e;
 }
 
-button:disabled {
-  opacity: .5;
+button.red {
+  background: #b91c1c;
 }
 
 .hidden {
   display: none !important;
+}
+
+.toolbar {
+  display: flex;
+  gap: 8px;
+  flex-wrap: wrap;
+  align-items: center;
+  justify-content: space-between;
 }
 
 .stats {
@@ -99,7 +154,7 @@ button:disabled {
 
 .stat strong {
   display: block;
-  font-size: 25px;
+  font-size: 27px;
   margin-top: 8px;
 }
 
@@ -113,7 +168,8 @@ table {
   background: white;
 }
 
-th, td {
+th,
+td {
   padding: 11px;
   border-bottom: 1px solid #e2e8f0;
   text-align: left;
@@ -126,8 +182,33 @@ th {
   white-space: nowrap;
 }
 
+.small {
+  font-size: 13px;
+  color: #64748b;
+}
+
+.error {
+  color: #b91c1c;
+  white-space: pre-wrap;
+  margin-top: 10px;
+}
+
+.success {
+  color: #15803d;
+  white-space: pre-wrap;
+  margin-top: 10px;
+}
+
+.detail-box {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 10px;
+  padding: 18px;
+  margin: 12px 0;
+}
+
 .answer {
-  padding: 12px;
+  padding: 13px;
   border-bottom: 1px solid #e2e8f0;
   line-height: 1.7;
 }
@@ -142,46 +223,90 @@ th {
   font-weight: bold;
 }
 
-.small {
-  font-size: 13px;
-  color: #64748b;
+.comment {
+  background: #f8fafc;
+  border: 1px solid #cbd5e1;
+  border-radius: 8px;
+  padding: 15px;
+  line-height: 1.8;
+  margin-top: 15px;
+  white-space: pre-wrap;
 }
 
-.toolbar {
+.edit-card {
+  background: #f8fafc;
+  border: 2px solid #94a3b8;
+  border-radius: 12px;
+  padding: 20px;
+  margin-top: 18px;
+}
+
+.edit-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 0 18px;
+}
+
+.edit-field {
+  min-width: 0;
+}
+
+.edit-field.full {
+  grid-column: 1 / -1;
+}
+
+.edit-field input,
+.edit-field textarea {
+  border: 2px solid #94a3b8;
+  background: white;
+}
+
+.edit-actions {
   display: flex;
   gap: 8px;
   flex-wrap: wrap;
-  align-items: center;
+  margin-top: 15px;
 }
 
-.comment {
-  line-height: 1.9;
-  background: #f8fafc;
-  padding: 14px;
-  border-radius: 8px;
-  margin-top: 12px;
-}
-
-.stats-note {
+.status-label {
+  display: inline-block;
+  padding: 5px 9px;
+  border-radius: 6px;
+  background: #e2e8f0;
   font-size: 12px;
-  color: #64748b;
-  margin-top: 8px;
 }
 
-.error {
-  white-space: pre-wrap;
-  color: #b91c1c;
+@media (max-width: 700px) {
+  .edit-grid {
+    grid-template-columns: 1fr;
+  }
+
+  .edit-field.full {
+    grid-column: auto;
+  }
+
+  main {
+    padding: 0 9px;
+  }
+
+  .card {
+    padding: 14px;
+  }
 }
 
 @media print {
-  header,
-  #loginCard,
-  .no-print {
-    display: none !important;
+  @page {
+    size: A4 landscape;
+    margin: 12mm;
   }
 
   body {
     background: white;
+  }
+
+  header,
+  .no-print {
+    display: none !important;
   }
 
   main {
@@ -195,6 +320,12 @@ th {
     border: 0;
     padding: 0;
   }
+
+  th,
+  td {
+    font-size: 10px;
+    padding: 6px;
+  }
 }
 </style>
 </head>
@@ -203,18 +334,17 @@ th {
 
 <header>
   <h1>ORBIS TEST 管理者ページ</h1>
-  <div class="small" style="color:#dbeafe">
-    受験結果・成績・回答管理
-  </div>
+  <p>受験結果・成績編集・回答確認・印刷管理</p>
 </header>
 
 <main>
 
 <!-- 管理者ログイン -->
+
 <section id="loginCard" class="card">
   <h2>管理者ログイン</h2>
 
-  <label>メールアドレス</label>
+  <label for="email">メールアドレス</label>
   <input
     id="email"
     type="email"
@@ -222,7 +352,7 @@ th {
     placeholder="登録済みメールアドレス"
   >
 
-  <label>パスワード</label>
+  <label for="password">パスワード</label>
   <input
     id="password"
     type="password"
@@ -230,20 +360,19 @@ th {
     placeholder="パスワード"
   >
 
-  <button id="loginBtn" onclick="login()">
-    ログイン
-  </button>
+  <button id="loginBtn" onclick="login()">ログイン</button>
 
   <div id="message" class="error"></div>
 </section>
 
 
-<!-- 管理画面 -->
+<!-- 管理者ダッシュボード -->
+
 <section id="dashboard" class="hidden">
 
   <div class="card no-print">
-    <div class="toolbar" style="justify-content:space-between">
-      <h2>受験結果一覧</h2>
+    <div class="toolbar">
+      <h2>管理者メニュー</h2>
 
       <div>
         <button class="secondary" onclick="loadResults()">
@@ -262,9 +391,9 @@ th {
   </div>
 
 
-  <!-- 統計 -->
-  <div class="card stats">
+  <!-- 集計 -->
 
+  <div class="card stats">
     <div class="stat">
       受験記録
       <strong id="totalCount">0</strong>
@@ -279,31 +408,33 @@ th {
       受験中
       <strong id="ongoingCount">0</strong>
     </div>
-
   </div>
 
 
   <!-- 検索 -->
-  <div class="card no-print">
-    <h2>絞り込み</h2>
 
-    <label>試験</label>
+  <div class="card no-print">
+    <h2>受験者検索・絞り込み</h2>
+
+    <label for="examFilter">試験名</label>
     <select id="examFilter" onchange="renderResults()">
       <option value="">すべての試験</option>
     </select>
 
-    <label>受験者検索（受験番号・氏名）</label>
+    <label for="memberFilter">受験番号・氏名</label>
     <input
       id="memberFilter"
-      placeholder="検索する文字を入力"
+      type="text"
+      placeholder="受験番号または氏名を入力"
       oninput="renderResults()"
     >
   </div>
 
 
   <!-- 成績一覧 -->
+
   <div class="card">
-    <h2>受験者の成績</h2>
+    <h2>受験者の成績一覧</h2>
 
     <div class="table-wrap">
       <table>
@@ -311,10 +442,11 @@ th {
           <tr>
             <th>受験番号</th>
             <th>氏名</th>
-            <th>試験</th>
-            <th>正答数</th>
-            <th>得点（100点満点）</th>
-            <th>参考平均点</th>
+            <th>試験名</th>
+            <th>正解数</th>
+            <th>問題数</th>
+            <th>得点</th>
+            <th>平均点</th>
             <th>平均差</th>
             <th>状態</th>
             <th class="no-print">操作</th>
@@ -325,11 +457,11 @@ th {
       </table>
     </div>
 
-    <div id="emptyMessage" class="small"></div>
+    <p id="emptyMessage" class="small"></p>
 
-    <p class="stats-note">
-      ※参考平均点は、試験ごとに生成した固定の参考値です。
-      実際の受験者全員の集計値ではありません。
+    <p class="small">
+      ※平均点は管理者が編集できます。未編集の場合は参考値を表示します。
+      実際の全受験者の平均点ではありません。
     </p>
   </div>
 
@@ -343,7 +475,7 @@ th {
 
 
 /* =====================================
-   1. Supabase接続
+   Supabase設定
 ===================================== */
 
 const SUPABASE_URL =
@@ -362,7 +494,7 @@ const db = window.supabase.createClient(
 
 
 /* =====================================
-   2. データ
+   データ保存用
 ===================================== */
 
 let attempts = [];
@@ -371,19 +503,19 @@ let filteredAttempts = [];
 
 
 /* =====================================
-   3. HTML安全処理
+   共通処理
 ===================================== */
 
 function escapeHTML(value) {
   return String(value ?? "").replace(
     /[&<>"']/g,
-    c => ({
+    char => ({
       "&": "&amp;",
       "<": "&lt;",
       ">": "&gt;",
       '"': "&quot;",
       "'": "&#39;"
-    }[c])
+    })[char]
   );
 }
 
@@ -393,131 +525,153 @@ function showMessage(message) {
 }
 
 
+function formatDate(value) {
+  if (!value) return "-";
+
+  const date = new Date(value);
+
+  if (isNaN(date.getTime())) return "-";
+
+  return date.toLocaleString("ja-JP");
+}
+
+
+function toLocalDateTime(value) {
+  if (!value) return "";
+
+  const date = new Date(value);
+
+  if (isNaN(date.getTime())) return "";
+
+  const year = date.getFullYear();
+  const month = String(date.getMonth() + 1).padStart(2, "0");
+  const day = String(date.getDate()).padStart(2, "0");
+  const hour = String(date.getHours()).padStart(2, "0");
+  const minute = String(date.getMinutes()).padStart(2, "0");
+
+  return `${year}-${month}-${day}T${hour}:${minute}`;
+}
+
+
 /* =====================================
-   4. 参考平均点
+   参考平均点
 ===================================== */
 
 function seededNumber(seed, min, max, salt) {
-  let h = 2166136261;
+  let hash = 2166136261;
 
-  const value = String(seed) + "|" + salt;
+  const text = String(seed) + "|" + salt;
 
-  for (let i = 0; i < value.length; i++) {
-    h ^= value.charCodeAt(i);
-    h = Math.imul(h, 16777619);
+  for (let i = 0; i < text.length; i++) {
+    hash ^= text.charCodeAt(i);
+    hash = Math.imul(hash, 16777619);
   }
 
   return Math.floor(
-    min + (h >>> 0) / 4294967295 * (max - min + 1)
+    min + (hash >>> 0) / 4294967295 * (max - min + 1)
   );
 }
 
 
-function referenceStats(examId) {
-  const average = seededNumber(
-    examId,
-    60,
-    80,
-    "average"
-  );
+function referenceStats(attempt) {
+  if (attempt.admin_reference_average !== null &&
+      attempt.admin_reference_average !== undefined) {
+    return {
+      average: Number(attempt.admin_reference_average)
+    };
+  }
+
+  const seed =
+    attempt.exam_id ||
+    attempt.exam_code ||
+    attempt.exam_title ||
+    "default";
 
   return {
-    average: average
+    average: seededNumber(seed, 60, 80, "average")
   };
 }
 
 
 /* =====================================
-   5. 試験の問題数を取得
+   問題数・得点
 ===================================== */
 
-function questionsForAttempt(a) {
-  const examId = String(a.exam_id || "");
-
-  if (!examId) {
-    return [];
+function questionCountFor(attempt) {
+  if (
+    attempt.admin_question_count_override !== null &&
+    attempt.admin_question_count_override !== undefined
+  ) {
+    return Number(attempt.admin_question_count_override);
   }
 
-  return questions.filter(q =>
-    String(q.exam_id || "") === examId
+  const actualCount = questions.filter(
+    q => q.exam_id === attempt.exam_id
+  ).length;
+
+  if (actualCount > 0) return actualCount;
+
+  return Number(attempt.total_questions || 0);
+}
+
+
+function scoreFor(attempt) {
+  if (
+    attempt.admin_score_override !== null &&
+    attempt.admin_score_override !== undefined
+  ) {
+    return Number(attempt.admin_score_override);
+  }
+
+  const total = questionCountFor(attempt);
+
+  if (!total || attempt.correct_count === null ||
+      attempt.correct_count === undefined) {
+    return null;
+  }
+
+  return Math.round(
+    Number(attempt.correct_count) / total * 100
   );
 }
 
 
-function questionCountFor(a) {
-  const matchingQuestions = questionsForAttempt(a);
-
-  if (matchingQuestions.length > 0) {
-    return matchingQuestions.length;
+function commentFor(attempt) {
+  if (attempt.admin_comment) {
+    return attempt.admin_comment;
   }
 
-  return (
-    Number(a.total_questions) ||
-    Number(a.question_count) ||
-    0
-  );
-}
+  const score = scoreFor(attempt);
 
-
-/* =====================================
-   6. 得点計算
-===================================== */
-
-function scoreFor(a) {
-  if (
-    a.correct_count === null ||
-    a.correct_count === undefined
-  ) {
-    return null;
+  if (score === null) {
+    return "採点結果はまだありません。";
   }
-
-  const total = questionCountFor(a);
-  const correct = Number(a.correct_count);
-
-  if (
-    !total ||
-    !Number.isFinite(correct) ||
-    correct < 0
-  ) {
-    return null;
-  }
-
-  return Math.round(correct / total * 100);
-}
-
-
-/* =====================================
-   7. 講評
-===================================== */
-
-function commentFor(score) {
 
   if (score >= 90) {
-    return "非常に素晴らしい結果です。これまで積み重ねてきた努力が、今回の得点にしっかり表れています。間違えた問題や迷った問題も確認し、さらに高い目標に挑戦していきましょう。今後のさらなる成長を期待しています。";
+    return "非常に素晴らしい結果です。これまで積み重ねてきた努力が、今回の得点に表れています。間違えた問題や迷った問題も確認し、さらに高い目標に挑戦していきましょう。";
   }
 
   if (score >= 80) {
-    return "よく頑張りました。基礎から応用まで、学習の成果が表れています。正解できた問題は自信につなげ、惜しくも間違えた問題は解き方を振り返りましょう。あと一歩の確認を積み重ね、次回はさらに安定した結果を目指してください。";
+    return "よく頑張りました。学習の成果が表れています。正解できた問題は自信につなげ、間違えた問題は解き方を振り返りましょう。";
   }
 
   if (score >= 60) {
-    return "今回の試験、お疲れさまでした。理解できている内容がある一方で、もう少し練習を重ねたい分野も見つかったと思います。結果だけで判断せず、間違えた問題を見直し、なぜその答えになるのかを説明できるようにしていきましょう。毎日の小さな積み重ねが大切です。次回の成長を期待しています。";
+    return "今回の試験、お疲れさまでした。間違えた問題を見直し、なぜその答えになるのか説明できるようにしましょう。毎日の積み重ねが次の成長につながります。";
   }
 
   if (score >= 40) {
-    return "最後まで試験に取り組んだことを、次につながる経験として受け止めましょう。今回の結果から復習すべき内容が見えてきます。基本事項から一つずつ確認し、短い時間でも繰り返し練習してください。焦らず着実に取り組めば必ず前進できます。次回も諦めずに挑戦しましょう。";
+    return "最後まで試験に取り組んだことを、次につながる経験として受け止めましょう。基本事項から一つずつ確認し、繰り返し練習してください。";
   }
 
-  return "今回の試験は、これからの学習方法を見直す良い機会です。思うような結果でなくても諦める必要はありません。基本事項を確認し、解けなかった問題を一問ずつ整理しましょう。分からないところをそのままにせず、少しずつ理解を積み重ねることが大切です。次回の挑戦を応援しています。";
+  return "今回の試験は、これからの学習方法を見直す良い機会です。解けなかった問題を一問ずつ整理し、少しずつ理解を積み重ねていきましょう。";
 }
 
 
 /* =====================================
-   8. ログイン
+   ログイン
 ===================================== */
 
 async function login() {
-
   const email =
     document.getElementById("email").value.trim();
 
@@ -528,48 +682,40 @@ async function login() {
     document.getElementById("loginBtn");
 
   if (!email || !password) {
-    showMessage(
-      "メールアドレスとパスワードを入力してください。"
-    );
+    showMessage("メールアドレスとパスワードを入力してください。");
     return;
   }
 
   button.disabled = true;
+
   showMessage("ログインしています...");
 
   try {
-
     const { error } = await db.auth.signInWithPassword({
-      email: email,
-      password: password
+      email,
+      password
     });
 
-    if (error) {
-      throw error;
-    }
+    if (error) throw error;
 
     await checkAdmin();
 
   } catch (error) {
-
     showMessage(
       "ログインできませんでした。\n" + error.message
     );
 
   } finally {
-
     button.disabled = false;
-
   }
 }
 
 
 /* =====================================
-   9. 管理者確認
+   管理者確認
 ===================================== */
 
 async function checkAdmin() {
-
   const {
     data: { user },
     error
@@ -581,7 +727,6 @@ async function checkAdmin() {
   }
 
   if (user.id !== ADMIN_ID) {
-
     await db.auth.signOut();
 
     showMessage(
@@ -602,18 +747,14 @@ async function checkAdmin() {
 
 
 /* =====================================
-   10. 結果取得
+   結果読み込み
 ===================================== */
 
 async function loadResults() {
-
-  const {
-    data,
-    error
-  } = await db.rpc("admin_get_results");
+  const { data, error } =
+    await db.rpc("admin_get_results");
 
   if (error) {
-
     alert(
       "結果を取得できませんでした。\n" +
       error.message
@@ -629,27 +770,28 @@ async function loadResults() {
     attempts.length;
 
   document.getElementById("submittedCount").textContent =
-    attempts.filter(a =>
-      a.submitted_at || a.status === "submitted"
+    attempts.filter(
+      a => a.submitted_at || a.status === "submitted"
     ).length;
 
   document.getElementById("ongoingCount").textContent =
-    attempts.filter(a =>
-      !a.submitted_at && a.status !== "submitted"
+    attempts.filter(
+      a => !a.submitted_at && a.status !== "submitted"
     ).length;
-
 
   const filter =
     document.getElementById("examFilter");
 
-  const oldValue = filter.value;
+  const previousValue = filter.value;
 
   const examMap = new Map();
 
-  attempts.forEach(a => {
+  attempts.forEach(attempt => {
     examMap.set(
-      a.exam_code || a.exam_id || a.exam_title,
-      a.exam_title || a.exam_code || "試験名不明"
+      attempt.exam_code || "",
+      attempt.admin_exam_title_override ||
+      attempt.exam_title ||
+      "試験名不明"
     );
   });
 
@@ -657,28 +799,25 @@ async function loadResults() {
     '<option value="">すべての試験</option>';
 
   examMap.forEach((title, code) => {
-
     const option = document.createElement("option");
 
-    option.value = code || "";
+    option.value = code;
     option.textContent = title;
 
     filter.appendChild(option);
-
   });
 
-  filter.value = oldValue;
+  filter.value = previousValue;
 
   renderResults();
 }
 
 
 /* =====================================
-   11. 成績一覧表示
+   一覧表示
 ===================================== */
 
 function renderResults() {
-
   const exam =
     document.getElementById("examFilter").value;
 
@@ -686,22 +825,16 @@ function renderResults() {
     document.getElementById("memberFilter")
       .value.trim().toLowerCase();
 
-  filteredAttempts = attempts.filter(a => {
-
-    const examValue =
-      a.exam_code || a.exam_id || a.exam_title || "";
-
-    const examMatch =
-      !exam || String(examValue) === String(exam);
+  filteredAttempts = attempts.filter(attempt => {
+    const matchExam =
+      !exam || attempt.exam_code === exam;
 
     const searchText =
-      `${a.member_number || ""} ${a.full_name || ""}`
+      `${attempt.member_number || ""} ${attempt.full_name || ""}`
         .toLowerCase();
 
-    return examMatch && searchText.includes(keyword);
-
+    return matchExam && searchText.includes(keyword);
   });
-
 
   const body =
     document.getElementById("resultsBody");
@@ -713,40 +846,41 @@ function renderResults() {
       ? ""
       : "該当する受験記録はありません。";
 
-
-  filteredAttempts.forEach((a, index) => {
-
+  filteredAttempts.forEach((attempt, index) => {
     const submitted =
-      !!a.submitted_at || a.status === "submitted";
+      !!attempt.submitted_at ||
+      attempt.status === "submitted";
 
-    const score = scoreFor(a);
-
-    const stats = referenceStats(
-      a.exam_id || a.exam_code || a.exam_title
-    );
+    const total = questionCountFor(attempt);
+    const score = scoreFor(attempt);
+    const average = referenceStats(attempt).average;
 
     const difference =
-      score === null
-        ? null
-        : score - stats.average;
+      score === null ? null : score - average;
 
+    const title =
+      attempt.admin_exam_title_override ||
+      attempt.exam_title ||
+      "-";
 
     const row = document.createElement("tr");
 
     row.innerHTML = `
-      <td>${escapeHTML(a.member_number || "-")}</td>
+      <td>${escapeHTML(attempt.member_number || "-")}</td>
 
-      <td>${escapeHTML(a.full_name || "氏名不明")}</td>
+      <td>${escapeHTML(attempt.full_name || "氏名不明")}</td>
 
-      <td>${escapeHTML(a.exam_title || "-")}</td>
+      <td>${escapeHTML(title)}</td>
 
-      <td>${escapeHTML(a.correct_count ?? "-")}</td>
+      <td>${escapeHTML(attempt.correct_count ?? "-")}</td>
+
+      <td>${escapeHTML(total)}</td>
 
       <td>
         ${score === null ? "-" : score + "点／100点"}
       </td>
 
-      <td>${stats.average}点</td>
+      <td>${average}点</td>
 
       <td>
         ${
@@ -758,7 +892,9 @@ function renderResults() {
       </td>
 
       <td>
-        ${submitted ? "提出済み" : "受験中"}
+        <span class="status-label">
+          ${submitted ? "提出済み" : "受験中"}
+        </span>
       </td>
 
       <td class="no-print">
@@ -775,7 +911,6 @@ function renderResults() {
 
     body.appendChild(row);
 
-
     const detailRow = document.createElement("tr");
 
     detailRow.id = "detail-" + index;
@@ -783,81 +918,460 @@ function renderResults() {
 
     const detailCell = document.createElement("td");
 
-    detailCell.colSpan = 9;
-    detailCell.innerHTML = detailHTML(a, score, stats);
+    detailCell.colSpan = 10;
+
+    detailCell.innerHTML =
+      detailHTML(attempt, index);
 
     detailRow.appendChild(detailCell);
 
     body.appendChild(detailRow);
-
   });
-
 }
 
 
 /* =====================================
-   12. 詳細表示
+   詳細表示
 ===================================== */
 
 function toggleDetail(index) {
+  const element =
+    document.getElementById("detail-" + index);
 
-  document.getElementById(
-    "detail-" + index
-  ).classList.toggle("hidden");
+  if (element) {
+    element.classList.toggle("hidden");
+  }
+}
 
+
+function detailHTML(attempt, index) {
+  const score = scoreFor(attempt);
+  const total = questionCountFor(attempt);
+  const average = referenceStats(attempt).average;
+
+  const title =
+    attempt.admin_exam_title_override ||
+    attempt.exam_title ||
+    "-";
+
+  const examDate =
+    attempt.admin_exam_datetime_override ||
+    attempt.started_at;
+
+  return `
+    <div class="detail-box">
+
+      <h3>受験者情報</h3>
+
+      <p>
+        <b>受験番号：</b>
+        ${escapeHTML(attempt.member_number || "-")}
+      </p>
+
+      <p>
+        <b>氏名：</b>
+        ${escapeHTML(attempt.full_name || "-")}
+      </p>
+
+      <p>
+        <b>試験名：</b>
+        ${escapeHTML(title)}
+      </p>
+
+      <p>
+        <b>受験日時：</b>
+        ${escapeHTML(formatDate(examDate))}
+      </p>
+
+      <p>
+        <b>正解数：</b>
+        ${escapeHTML(attempt.correct_count ?? "-")}
+      </p>
+
+      <p>
+        <b>問題数：</b>
+        ${escapeHTML(total)}
+      </p>
+
+      <p>
+        <b>得点：</b>
+        ${score === null ? "-" : score + "点／100点"}
+      </p>
+
+      <p>
+        <b>参考平均点：</b>
+        ${average}点
+      </p>
+
+      <div class="comment">
+        <b>管理者コメント・講評</b>
+
+        <p>${escapeHTML(commentFor(attempt))}</p>
+      </div>
+
+      <div class="no-print">
+        <button onclick="openEditForm(${index})">
+          成績を編集する
+        </button>
+      </div>
+
+      <div id="edit-area-${index}" class="hidden"></div>
+
+      <h3>受験者の回答内容</h3>
+
+      ${renderAnswerList(attempt)}
+
+    </div>
+  `;
 }
 
 
 /* =====================================
-   13. 日時表示
+   編集フォーム
 ===================================== */
 
-function formatDate(value) {
+function openEditForm(index) {
+  const attempt = filteredAttempts[index];
 
-  if (!value) {
-    return "未提出";
+  if (!attempt) return;
+
+  const area =
+    document.getElementById("edit-area-" + index);
+
+  if (!area) return;
+
+  const total = questionCountFor(attempt);
+  const score = scoreFor(attempt);
+  const average = referenceStats(attempt).average;
+
+  const examTitle =
+    attempt.admin_exam_title_override ||
+    attempt.exam_title ||
+    "";
+
+  const examDate =
+    attempt.admin_exam_datetime_override ||
+    attempt.started_at ||
+    "";
+
+  const comment = commentFor(attempt);
+
+  area.classList.remove("hidden");
+
+  area.innerHTML = `
+    <div class="edit-card">
+
+      <h3>成績編集画面</h3>
+
+      <p class="small">
+        入力内容を変更して「変更を保存」を押してください。
+        保存後、一覧と印刷用成績表にも反映されます。
+      </p>
+
+      <div class="edit-grid">
+
+        <div class="edit-field">
+          <label>受験番号</label>
+          <input
+            id="edit-number-${index}"
+            type="text"
+            value="${escapeHTML(attempt.member_number || "")}"
+          >
+        </div>
+
+        <div class="edit-field">
+          <label>氏名</label>
+          <input
+            id="edit-name-${index}"
+            type="text"
+            value="${escapeHTML(attempt.full_name || "")}"
+          >
+        </div>
+
+        <div class="edit-field full">
+          <label>試験名</label>
+          <input
+            id="edit-title-${index}"
+            type="text"
+            value="${escapeHTML(examTitle)}"
+          >
+        </div>
+
+        <div class="edit-field full">
+          <label>受験日時</label>
+          <input
+            id="edit-date-${index}"
+            type="datetime-local"
+            value="${escapeHTML(toLocalDateTime(examDate))}"
+          >
+        </div>
+
+        <div class="edit-field">
+          <label>問題数</label>
+          <input
+            id="edit-total-${index}"
+            type="number"
+            min="0"
+            step="1"
+            value="${escapeHTML(total)}"
+          >
+        </div>
+
+        <div class="edit-field">
+          <label>正解数</label>
+          <input
+            id="edit-correct-${index}"
+            type="number"
+            min="0"
+            step="1"
+            value="${escapeHTML(attempt.correct_count ?? 0)}"
+          >
+        </div>
+
+        <div class="edit-field">
+          <label>得点（100点満点）</label>
+          <input
+            id="edit-score-${index}"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value="${score === null ? 0 : escapeHTML(score)}"
+          >
+        </div>
+
+        <div class="edit-field">
+          <label>参考平均点（100点満点）</label>
+          <input
+            id="edit-average-${index}"
+            type="number"
+            min="0"
+            max="100"
+            step="1"
+            value="${escapeHTML(average)}"
+          >
+        </div>
+
+        <div class="edit-field full">
+          <label>管理者コメント・講評</label>
+          <textarea
+            id="edit-comment-${index}"
+          >${escapeHTML(comment)}</textarea>
+        </div>
+
+      </div>
+
+      <div id="edit-message-${index}" class="error"></div>
+
+      <div class="edit-actions">
+        <button
+          class="green"
+          id="save-button-${index}"
+          onclick="saveEdit(${index})"
+        >
+          変更を保存
+        </button>
+
+        <button
+          class="secondary"
+          onclick="closeEditForm(${index})"
+        >
+          キャンセル
+        </button>
+      </div>
+
+    </div>
+  `;
+}
+
+
+function closeEditForm(index) {
+  const area =
+    document.getElementById("edit-area-" + index);
+
+  if (area) {
+    area.classList.add("hidden");
+    area.innerHTML = "";
   }
-
-  const date = new Date(value);
-
-  if (isNaN(date.getTime())) {
-    return "-";
-  }
-
-  return date.toLocaleString("ja-JP", {
-    timeZone: "Asia/Tokyo"
-  });
-
 }
 
 
 /* =====================================
-   14. 回答取得
+   編集内容の保存
 ===================================== */
 
-function getAnswerMap(a) {
+async function saveEdit(index) {
+  const attempt = filteredAttempts[index];
 
-  return (
-    a.answers && typeof a.answers === "object"
-      ? a.answers
-      : {}
-  );
+  if (!attempt) return;
 
+  const getValue = id =>
+    document.getElementById(id).value.trim();
+
+  const memberNumber =
+    getValue("edit-number-" + index);
+
+  const fullName =
+    getValue("edit-name-" + index);
+
+  const examTitle =
+    getValue("edit-title-" + index);
+
+  const dateValue =
+    getValue("edit-date-" + index);
+
+  const questionCount =
+    Number(getValue("edit-total-" + index));
+
+  const correctCount =
+    Number(getValue("edit-correct-" + index));
+
+  const score =
+    Number(getValue("edit-score-" + index));
+
+  const average =
+    Number(getValue("edit-average-" + index));
+
+  const comment =
+    getValue("edit-comment-" + index);
+
+  const message =
+    document.getElementById("edit-message-" + index);
+
+  const button =
+    document.getElementById("save-button-" + index);
+
+  message.textContent = "";
+
+  if (!memberNumber || !fullName || !examTitle) {
+    message.textContent =
+      "受験番号・氏名・試験名を入力してください。";
+    return;
+  }
+
+  if (
+    !Number.isInteger(questionCount) ||
+    questionCount < 0
+  ) {
+    message.textContent =
+      "問題数は0以上の整数で入力してください。";
+    return;
+  }
+
+  if (
+    !Number.isInteger(correctCount) ||
+    correctCount < 0 ||
+    correctCount > questionCount
+  ) {
+    message.textContent =
+      "正解数は0以上で、問題数以下にしてください。";
+    return;
+  }
+
+  if (
+    !Number.isInteger(score) ||
+    score < 0 ||
+    score > 100
+  ) {
+    message.textContent =
+      "得点は0点から100点の整数で入力してください。";
+    return;
+  }
+
+  if (
+    !Number.isInteger(average) ||
+    average < 0 ||
+    average > 100
+  ) {
+    message.textContent =
+      "平均点は0点から100点の整数で入力してください。";
+    return;
+  }
+
+  let examDateISO = null;
+
+  if (dateValue) {
+    const date = new Date(dateValue);
+
+    if (isNaN(date.getTime())) {
+      message.textContent =
+        "受験日時を正しく入力してください。";
+      return;
+    }
+
+    examDateISO = date.toISOString();
+  }
+
+  button.disabled = true;
+  button.textContent = "保存しています...";
+
+  try {
+    const { data, error } = await db.rpc(
+      "admin_update_attempt",
+      {
+        p_attempt_id: attempt.attempt_id,
+        p_full_name: fullName,
+        p_member_number: memberNumber,
+        p_exam_title: examTitle,
+        p_exam_datetime: examDateISO,
+        p_question_count: questionCount,
+        p_correct_count: correctCount,
+        p_score: score,
+        p_reference_average: average,
+        p_comment: comment
+      }
+    );
+
+    if (error) throw error;
+
+    if (data && data.success === false) {
+      throw new Error(
+        data.message || "保存できませんでした。"
+      );
+    }
+
+    alert("成績を保存しました。");
+
+    await loadResults();
+
+  } catch (error) {
+    message.textContent =
+      "保存に失敗しました。\n" + error.message;
+
+    button.disabled = false;
+    button.textContent = "変更を保存";
+  }
 }
 
 
-function selectedAnswer(a, q) {
+/* =====================================
+   回答内容
+===================================== */
 
-  const answers = getAnswerMap(a);
+function getAnswerMap(attempt) {
+  if (
+    attempt.answers &&
+    typeof attempt.answers === "object"
+  ) {
+    return attempt.answers;
+  }
 
-  let value = answers[q.question_id || q.id];
+  return {};
+}
+
+
+function selectedAnswer(attempt, question) {
+  const answers = getAnswerMap(attempt);
+
+  let value =
+    answers[question.question_id || question.id];
 
   if (value === undefined) {
-    value = answers[String(q.question_number)];
+    value = answers[String(question.question_number)];
   }
 
   if (value === undefined) {
-    value = answers[q.question_number - 1];
+    value = answers[question.question_number - 1];
   }
 
   if (value && typeof value === "object") {
@@ -869,41 +1383,36 @@ function selectedAnswer(a, q) {
   }
 
   return value;
-
 }
 
 
-/* =====================================
-   15. 回答内容表示
-===================================== */
+function renderAnswerList(attempt) {
+  const examQuestions = questions
+    .filter(q => q.exam_id === attempt.exam_id)
+    .sort(
+      (a, b) =>
+        Number(a.question_number) -
+        Number(b.question_number)
+    );
 
-function renderAnswerList(a) {
-
-  const qs = questionsForAttempt(a).sort(
-    (x, y) =>
-      Number(x.question_number) -
-      Number(y.question_number)
-  );
-
-  if (!qs.length) {
-
+  if (!examQuestions.length) {
     return `
       <p class="small">
-        問題情報を取得できませんでした。
+        問題情報が取得できませんでした。
       </p>
+
       <pre>${escapeHTML(
-        JSON.stringify(a.answers || {}, null, 2)
+        JSON.stringify(attempt.answers || {}, null, 2)
       )}</pre>
     `;
-
   }
 
+  return examQuestions.map(question => {
+    const selected =
+      selectedAnswer(attempt, question);
 
-  return qs.map(q => {
-
-    const selected = selectedAnswer(a, q);
-
-    const correct = q.correct_answer;
+    const correct =
+      question.correct_answer;
 
     const answered =
       selected !== undefined &&
@@ -918,20 +1427,20 @@ function renderAnswerList(a) {
       <div class="answer">
 
         <b>
-          第${escapeHTML(q.question_number)}問
+          第${escapeHTML(question.question_number)}問
         </b>
 
         <p>
-          ${escapeHTML(q.question_text || "")}
+          ${escapeHTML(question.question_text || "")}
         </p>
 
         <p>
-          受験者の回答：
+          <b>受験者の回答：</b>
           ${answered ? escapeHTML(selected) : "未回答"}
         </p>
 
         <p>
-          正解：
+          <b>正解：</b>
           ${escapeHTML(correct ?? "未設定")}
         </p>
 
@@ -947,117 +1456,17 @@ function renderAnswerList(a) {
 
       </div>
     `;
-
   }).join("");
-
 }
 
 
 /* =====================================
-   16. 詳細成績
-===================================== */
-
-function detailHTML(a, score, stats) {
-
-  const difference =
-    score === null
-      ? null
-      : score - stats.average;
-
-  const total = questionCountFor(a);
-
-  return `
-
-    <div class="card">
-
-      <p>
-        <b>受験番号：</b>
-        ${escapeHTML(a.member_number || "-")}
-      </p>
-
-      <p>
-        <b>氏名：</b>
-        ${escapeHTML(a.full_name || "氏名不明")}
-      </p>
-
-      <p>
-        <b>試験：</b>
-        ${escapeHTML(a.exam_title || "-")}
-      </p>
-
-      <p>
-        <b>開始：</b>
-        ${escapeHTML(formatDate(a.started_at))}
-      </p>
-
-      <p>
-        <b>提出：</b>
-        ${escapeHTML(formatDate(a.submitted_at))}
-      </p>
-
-      <p>
-        <b>問題数：</b>
-        ${total || "-"}問
-      </p>
-
-      <p>
-        <b>正答数：</b>
-        ${escapeHTML(a.correct_count ?? "-")}
-      </p>
-
-      <p>
-        <b>得点：</b>
-        ${score === null ? "採点不可" : score + "点／100点"}
-      </p>
-
-      <p>
-        <b>参考平均点：</b>
-        ${stats.average}点
-      </p>
-
-      <p>
-        <b>平均点との差：</b>
-        ${
-          difference === null
-            ? "-"
-            : (difference >= 0 ? "+" : "") +
-              difference + "点"
-        }
-      </p>
-
-      <div class="comment">
-
-        <b>講評</b>
-
-        <p>
-          ${
-            score === null
-              ? "得点を計算できません。問題数と正答数のデータを確認してください。"
-              : commentFor(score)
-          }
-        </p>
-
-      </div>
-
-      <h3>回答内容・正誤</h3>
-
-      ${renderAnswerList(a)}
-
-    </div>
-
-  `;
-
-}
-
-
-/* =====================================
-   17. 成績一覧印刷
+   成績一覧の印刷
 ===================================== */
 
 function printList() {
-
-  const rows = filteredAttempts.filter(a =>
-    a.submitted_at || a.status === "submitted"
+  const rows = filteredAttempts.filter(
+    a => a.submitted_at || a.status === "submitted"
   );
 
   if (!rows.length) {
@@ -1065,137 +1474,122 @@ function printList() {
     return;
   }
 
+  const tableRows = rows.map(attempt => {
+    const score = scoreFor(attempt);
+    const average = referenceStats(attempt).average;
+
+    const difference =
+      score === null ? null : score - average;
+
+    const title =
+      attempt.admin_exam_title_override ||
+      attempt.exam_title ||
+      "-";
+
+    return `
+      <tr>
+        <td>${escapeHTML(attempt.member_number || "-")}</td>
+
+        <td>${escapeHTML(attempt.full_name || "-")}</td>
+
+        <td>${escapeHTML(title)}</td>
+
+        <td>${escapeHTML(attempt.correct_count ?? "-")}</td>
+
+        <td>${escapeHTML(questionCountFor(attempt))}</td>
+
+        <td>
+          ${score === null ? "-" : score + "点／100点"}
+        </td>
+
+        <td>${average}点</td>
+
+        <td>
+          ${
+            difference === null
+              ? "-"
+              : (difference >= 0 ? "+" : "") +
+                difference + "点"
+          }
+        </td>
+
+        <td>${escapeHTML(formatDate(attempt.submitted_at))}</td>
+      </tr>
+    `;
+  }).join("");
+
   const html = `
+    <h2>オルビステスト 成績一覧</h2>
 
-    <div class="print-company">
-      株式会社ゲートスクエア
-    </div>
-
-    <div class="print-title">
-      オルビステスト 成績一覧
-    </div>
-
-    <table class="list-table">
-
+    <table>
       <thead>
         <tr>
           <th>受験番号</th>
           <th>氏名</th>
-          <th>試験</th>
-          <th>正答数</th>
+          <th>試験名</th>
+          <th>正解数</th>
+          <th>問題数</th>
           <th>得点</th>
-          <th>参考平均</th>
+          <th>平均点</th>
           <th>平均差</th>
           <th>提出日時</th>
         </tr>
       </thead>
 
       <tbody>
-
-        ${rows.map(a => {
-
-          const score = scoreFor(a);
-
-          const stats = referenceStats(
-            a.exam_id || a.exam_code || a.exam_title
-          );
-
-          const difference =
-            score === null
-              ? "-"
-              : (score - stats.average >= 0 ? "+" : "") +
-                (score - stats.average) + "点";
-
-          return `
-
-            <tr>
-              <td>${escapeHTML(a.member_number || "-")}</td>
-              <td>${escapeHTML(a.full_name || "-")}</td>
-              <td>${escapeHTML(a.exam_title || "-")}</td>
-              <td>${escapeHTML(a.correct_count ?? "-")}</td>
-              <td>${score === null ? "-" : score + "点／100点"}</td>
-              <td>${stats.average}点</td>
-              <td>${difference}</td>
-              <td>${escapeHTML(formatDate(a.submitted_at))}</td>
-            </tr>
-
-          `;
-
-        }).join("")}
-
+        ${tableRows}
       </tbody>
-
     </table>
-
-    <div class="print-footer">
-      株式会社ゲートスクエア
-    </div>
-
   `;
 
   openPrintWindow("オルビステスト 成績一覧", html);
-
 }
 
 
 /* =====================================
-   18. 個人票印刷
-   受験者用PDFと同じレイアウト
+   個人別成績表の印刷
 ===================================== */
 
 function printIndividual(index) {
+  const attempt = filteredAttempts[index];
 
-  const a = filteredAttempts[index];
+  if (!attempt) return;
 
-  if (!a) {
-    return;
-  }
-
-  const score = scoreFor(a);
-
-  const stats = referenceStats(
-    a.exam_id || a.exam_code || a.exam_title
-  );
-
-  const total = questionCountFor(a);
-
-  const correct = Number(a.correct_count || 0);
+  const score = scoreFor(attempt);
+  const total = questionCountFor(attempt);
+  const average = referenceStats(attempt).average;
 
   const difference =
-    score === null
-      ? null
-      : score - stats.average;
+    score === null ? null : score - average;
+
+  const title =
+    attempt.admin_exam_title_override ||
+    attempt.exam_title ||
+    "-";
 
   const examDate =
-    a.submitted_at || a.started_at;
+    attempt.admin_exam_datetime_override ||
+    attempt.started_at;
 
   const html = `
+    <h2>受験者成績個人票</h2>
 
-    <div class="print-company">
-      株式会社ゲートスクエア
-    </div>
-
-    <div class="print-title">
-      オルビステスト 成績表
-    </div>
-
-    <table class="result-table">
-
+    <table>
       <tbody>
 
         <tr>
-          <th>受験者氏名</th>
-          <td>${escapeHTML(a.full_name || "氏名不明")}</td>
+          <th>受験番号</th>
+          <td>${escapeHTML(attempt.member_number || "-")}</td>
         </tr>
 
         <tr>
-          <th>受験番号</th>
-          <td>${escapeHTML(a.member_number || "-")}</td>
+          <th>氏名</th>
+          <td>${escapeHTML(attempt.full_name || "-")}</td>
         </tr>
 
         <tr>
           <th>試験名</th>
-          <td>${escapeHTML(a.exam_title || "-")}</td>
+          <td>${escapeHTML(title)}</td>
         </tr>
 
         <tr>
@@ -1204,25 +1598,30 @@ function printIndividual(index) {
         </tr>
 
         <tr>
+          <th>提出日時</th>
+          <td>${escapeHTML(formatDate(attempt.submitted_at))}</td>
+        </tr>
+
+        <tr>
+          <th>正解数</th>
+          <td>${escapeHTML(attempt.correct_count ?? "-")}</td>
+        </tr>
+
+        <tr>
           <th>問題数</th>
-          <td>${total || "-"}問</td>
+          <td>${escapeHTML(total)}</td>
         </tr>
 
         <tr>
-          <th>正答数</th>
-          <td>${correct}問</td>
-        </tr>
-
-        <tr>
-          <th>得点（100点満点）</th>
+          <th>得点</th>
           <td>
-            ${score === null ? "採点不可" : score + "点／100点"}
+            ${score === null ? "-" : score + "点／100点"}
           </td>
         </tr>
 
         <tr>
           <th>参考平均点</th>
-          <td>${stats.average}点（参考）</td>
+          <td>${average}点</td>
         </tr>
 
         <tr>
@@ -1238,55 +1637,31 @@ function printIndividual(index) {
         </tr>
 
       </tbody>
-
     </table>
 
-
-    <div class="print-score">
-
-      ${
-        score === null
-          ? "採点結果を確認できません。"
-          : `${score}点／100点（正答数 ${correct} / ${total}問）`
-      }
-
+    <div class="comment">
+      <b>管理者コメント・講評</b>
+      <p>${escapeHTML(commentFor(attempt))}</p>
     </div>
 
+    <h3>回答内容・正誤</h3>
 
-    <div class="print-comment">
-
-      <b>講評：</b>
-
-      ${
-        score === null
-          ? "得点を計算できません。問題数と正答数のデータを確認してください。"
-          : commentFor(score)
-      }
-
-    </div>
-
-
-    <div class="print-footer">
-      株式会社ゲートスクエア
-    </div>
-
+    ${renderAnswerList(attempt)}
   `;
 
   openPrintWindow("オルビステスト 成績表", html);
-
 }
 
 
 /* =====================================
-   19. 印刷画面
+   印刷画面
 ===================================== */
 
-function openPrintWindow(title, body) {
+function openPrintWindow(title, content) {
+  const printWindow =
+    window.open("", "_blank");
 
-  const win = window.open("", "_blank");
-
-  if (!win) {
-
+  if (!printWindow) {
     alert(
       "印刷画面が開けません。\n" +
       "ブラウザのポップアップを許可してください。"
@@ -1295,191 +1670,117 @@ function openPrintWindow(title, body) {
     return;
   }
 
-  win.document.write(
-    printDocument(title, body)
-  );
+  printWindow.document.write(`
+    <!DOCTYPE html>
+    <html lang="ja">
 
-  win.document.close();
-  win.focus();
+    <head>
+      <meta charset="UTF-8">
 
-  setTimeout(() => {
-    win.print();
-  }, 300);
+      <title>${escapeHTML(title)}</title>
 
+      <style>
+        body {
+          font-family: Arial, "Noto Sans JP", sans-serif;
+          color: #111;
+          padding: 20px;
+        }
+
+        h1,
+        h2 {
+          text-align: center;
+        }
+
+        table {
+          width: 100%;
+          border-collapse: collapse;
+          margin: 18px 0;
+        }
+
+        th,
+        td {
+          border: 1px solid #555;
+          padding: 8px;
+          text-align: left;
+          font-size: 12px;
+        }
+
+        th {
+          background: #f1f5f9;
+        }
+
+        .comment {
+          border: 1px solid #777;
+          padding: 12px;
+          line-height: 1.8;
+          margin: 16px 0;
+          white-space: pre-wrap;
+        }
+
+        .answer {
+          border-bottom: 1px solid #bbb;
+          padding: 8px 0;
+          line-height: 1.6;
+          font-size: 12px;
+        }
+
+        .good {
+          color: green;
+        }
+
+        .bad {
+          color: #b91c1c;
+        }
+
+        @page {
+          size: A4 landscape;
+          margin: 12mm;
+        }
+      </style>
+    </head>
+
+    <body>
+
+      <h1>${escapeHTML(title)}</h1>
+
+      <div style="text-align:center;font-weight:bold">
+        ORBIS TEST
+      </div>
+
+      ${content}
+
+      <p style="text-align:right;font-size:11px">
+        ORBIS CBT SYSTEM
+      </p>
+
+    </body>
+    </html>
+  `);
+
+  printWindow.document.close();
+  printWindow.focus();
+
+  printWindow.onload = () => {
+    printWindow.print();
+  };
 }
 
 
 /* =====================================
-   20. 印刷用HTML
-===================================== */
-
-function printDocument(title, body) {
-
-  return `
-
-<!DOCTYPE html>
-<html lang="ja">
-
-<head>
-
-<meta charset="UTF-8">
-
-<title>${escapeHTML(title)}</title>
-
-<style>
-
-* {
-  box-sizing: border-box;
-}
-
-@page {
-  size: A4 portrait;
-  margin: 18mm 20mm;
-}
-
-body {
-  font-family: Arial, "Noto Sans JP", sans-serif;
-  color: #111;
-  background: white;
-  margin: 0;
-  padding: 0;
-  font-size: 13px;
-}
-
-.print-sheet {
-  width: 100%;
-  max-width: 170mm;
-  margin: 0 auto;
-}
-
-.print-company {
-  text-align: center;
-  font-size: 15px;
-  font-weight: bold;
-  margin-bottom: 30px;
-}
-
-.print-title {
-  text-align: center;
-  font-size: 23px;
-  font-weight: bold;
-  letter-spacing: 3px;
-  margin-bottom: 35px;
-}
-
-.result-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-bottom: 25px;
-}
-
-.result-table th,
-.result-table td {
-  border: none;
-  padding: 10px 8px;
-  font-size: 13px;
-  text-align: left;
-  vertical-align: middle;
-}
-
-.result-table th {
-  width: 38%;
-  font-weight: normal;
-  white-space: nowrap;
-}
-
-.result-table td {
-  font-weight: normal;
-}
-
-.print-score {
-  text-align: center;
-  font-size: 17px;
-  font-weight: bold;
-  margin: 30px 0 25px;
-}
-
-.print-comment {
-  font-size: 13px;
-  line-height: 1.9;
-  margin-top: 20px;
-  text-align: justify;
-}
-
-.print-footer {
-  text-align: right;
-  font-size: 13px;
-  font-weight: bold;
-  margin-top: 55px;
-}
-
-.list-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin-top: 25px;
-}
-
-.list-table th,
-.list-table td {
-  border: 1px solid #555;
-  padding: 6px;
-  font-size: 10px;
-  text-align: left;
-}
-
-.list-table th {
-  background: #f1f5f9;
-}
-
-@media print {
-
-  body {
-    -webkit-print-color-adjust: exact;
-    print-color-adjust: exact;
-  }
-
-}
-
-</style>
-
-</head>
-
-<body>
-
-<div class="print-sheet">
-
-${body}
-
-</div>
-
-</body>
-
-</html>
-
-`;
-
-}
-
-
-/* =====================================
-   21. ログアウト
+   ログアウト
 ===================================== */
 
 async function logout() {
-
   await db.auth.signOut();
-
   location.reload();
-
 }
 
 
 /* =====================================
-   22. 初期化
+   初期起動
 ===================================== */
 
 async function initialize() {
-
   const {
     data: { session }
   } = await db.auth.getSession();
@@ -1487,32 +1788,26 @@ async function initialize() {
   if (session) {
     await checkAdmin();
   }
-
 }
 
 
 db.auth.onAuthStateChange(event => {
-
   if (event === "SIGNED_OUT") {
-
     document.getElementById("dashboard")
       .classList.add("hidden");
 
     document.getElementById("loginCard")
       .classList.remove("hidden");
-
   }
-
 });
 
 
-document.getElementById("password")
+document
+  .getElementById("password")
   .addEventListener("keydown", event => {
-
     if (event.key === "Enter") {
       login();
     }
-
   });
 
 
