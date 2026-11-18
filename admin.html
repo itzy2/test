@@ -79,7 +79,6 @@ button.green {
 
 button:disabled {
   opacity: .5;
-  cursor: not-allowed;
 }
 
 .hidden {
@@ -127,18 +126,10 @@ th {
   white-space: nowrap;
 }
 
-details {
-  margin: 10px 0;
-  background: #f8fafc;
-  padding: 12px;
-  border-radius: 8px;
-}
-
 .answer {
   padding: 12px;
   border-bottom: 1px solid #e2e8f0;
   line-height: 1.7;
-  page-break-inside: avoid;
 }
 
 .good {
@@ -153,10 +144,6 @@ details {
 
 .small {
   font-size: 13px;
-  color: #64748b;
-}
-
-.muted {
   color: #64748b;
 }
 
@@ -187,19 +174,14 @@ details {
 }
 
 @media print {
-  @page {
-    size: A4 landscape;
-    margin: 12mm;
-  }
-
-  body {
-    background: white;
-  }
-
   header,
   #loginCard,
   .no-print {
     display: none !important;
+  }
+
+  body {
+    background: white;
   }
 
   main {
@@ -212,15 +194,6 @@ details {
     box-shadow: none;
     border: 0;
     padding: 0;
-  }
-
-  table {
-    font-size: 10px;
-  }
-
-  th, td {
-    font-size: 10px;
-    padding: 6px;
   }
 }
 </style>
@@ -237,135 +210,141 @@ details {
 
 <main>
 
-  <!-- ログイン -->
-  <section id="loginCard" class="card">
-    <h2>管理者ログイン</h2>
+<!-- 管理者ログイン -->
+<section id="loginCard" class="card">
+  <h2>管理者ログイン</h2>
 
-    <label>メールアドレス</label>
-    <input
-      id="email"
-      type="email"
-      autocomplete="username"
-      placeholder="登録済みメールアドレス"
-    >
+  <label>メールアドレス</label>
+  <input
+    id="email"
+    type="email"
+    autocomplete="username"
+    placeholder="登録済みメールアドレス"
+  >
 
-    <label>パスワード</label>
-    <input
-      id="password"
-      type="password"
-      autocomplete="current-password"
-      placeholder="パスワード"
-    >
+  <label>パスワード</label>
+  <input
+    id="password"
+    type="password"
+    autocomplete="current-password"
+    placeholder="パスワード"
+  >
 
-    <button id="loginBtn" onclick="login()">
-      ログイン
-    </button>
+  <button id="loginBtn" onclick="login()">
+    ログイン
+  </button>
 
-    <div id="message" class="error"></div>
-  </section>
+  <div id="message" class="error"></div>
+</section>
 
-  <!-- 管理画面 -->
-  <section id="dashboard" class="hidden">
 
-    <div class="card no-print">
-      <div class="toolbar" style="justify-content:space-between">
-        <h2>受験結果一覧</h2>
+<!-- 管理画面 -->
+<section id="dashboard" class="hidden">
 
-        <div>
-          <button class="secondary" onclick="loadResults()">
-            最新情報に更新
-          </button>
+  <div class="card no-print">
+    <div class="toolbar" style="justify-content:space-between">
+      <h2>受験結果一覧</h2>
 
-          <button class="secondary" onclick="logout()">
-            ログアウト
-          </button>
-        </div>
-      </div>
+      <div>
+        <button class="secondary" onclick="loadResults()">
+          最新情報に更新
+        </button>
 
-      <div class="toolbar">
-        <button class="green" onclick="printList()">
-          成績一覧を印刷
+        <button class="secondary" onclick="logout()">
+          ログアウト
         </button>
       </div>
     </div>
 
-    <!-- 統計 -->
-    <div class="card stats">
-      <div class="stat">
-        受験記録
-        <strong id="totalCount">0</strong>
-      </div>
+    <button class="green" onclick="printList()">
+      成績一覧を印刷
+    </button>
+  </div>
 
-      <div class="stat">
-        提出済み
-        <strong id="submittedCount">0</strong>
-      </div>
 
-      <div class="stat">
-        受験中
-        <strong id="ongoingCount">0</strong>
-      </div>
+  <!-- 統計 -->
+  <div class="card stats">
+
+    <div class="stat">
+      受験記録
+      <strong id="totalCount">0</strong>
     </div>
 
-    <!-- 検索 -->
-    <div class="card no-print">
-      <h2>絞り込み</h2>
-
-      <label>試験</label>
-      <select id="examFilter" onchange="renderResults()">
-        <option value="">すべての試験</option>
-      </select>
-
-      <label>受験者検索（受験番号・氏名）</label>
-      <input
-        id="memberFilter"
-        placeholder="検索する文字を入力"
-        oninput="renderResults()"
-      >
+    <div class="stat">
+      提出済み
+      <strong id="submittedCount">0</strong>
     </div>
 
-    <!-- 成績一覧 -->
-    <div class="card">
-      <h2>受験者の成績</h2>
-
-      <div class="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>受験番号</th>
-              <th>氏名</th>
-              <th>試験</th>
-              <th>正答数</th>
-              <th>得点（100点満点）</th>
-              <th>参考平均点</th>
-              <th>平均差</th>
-              <th>状態</th>
-              <th class="no-print">操作</th>
-            </tr>
-          </thead>
-
-          <tbody id="resultsBody"></tbody>
-        </table>
-      </div>
-
-      <div id="emptyMessage" class="small"></div>
-
-      <p class="stats-note">
-        ※参考平均点は試験ごとにランダム生成した固定の参考値です。
-        実際の受験者全員の集計値ではありません。
-      </p>
+    <div class="stat">
+      受験中
+      <strong id="ongoingCount">0</strong>
     </div>
 
-  </section>
+  </div>
+
+
+  <!-- 検索 -->
+  <div class="card no-print">
+    <h2>絞り込み</h2>
+
+    <label>試験</label>
+    <select id="examFilter" onchange="renderResults()">
+      <option value="">すべての試験</option>
+    </select>
+
+    <label>受験者検索（受験番号・氏名）</label>
+    <input
+      id="memberFilter"
+      placeholder="検索する文字を入力"
+      oninput="renderResults()"
+    >
+  </div>
+
+
+  <!-- 成績一覧 -->
+  <div class="card">
+    <h2>受験者の成績</h2>
+
+    <div class="table-wrap">
+      <table>
+        <thead>
+          <tr>
+            <th>受験番号</th>
+            <th>氏名</th>
+            <th>試験</th>
+            <th>正答数</th>
+            <th>得点（100点満点）</th>
+            <th>参考平均点</th>
+            <th>平均差</th>
+            <th>状態</th>
+            <th class="no-print">操作</th>
+          </tr>
+        </thead>
+
+        <tbody id="resultsBody"></tbody>
+      </table>
+    </div>
+
+    <div id="emptyMessage" class="small"></div>
+
+    <p class="stats-note">
+      ※参考平均点は、試験ごとに生成した固定の参考値です。
+      実際の受験者全員の集計値ではありません。
+    </p>
+  </div>
+
+</section>
 
 </main>
+
 
 <script>
 "use strict";
 
-/* =========================
-   Supabase設定
-========================= */
+
+/* =====================================
+   1. Supabase接続
+===================================== */
 
 const SUPABASE_URL =
   "https://hxrtpftlklgwesvanlpk.supabase.co";
@@ -381,42 +360,50 @@ const db = window.supabase.createClient(
   SUPABASE_KEY
 );
 
-/* =========================
-   データ
-========================= */
+
+/* =====================================
+   2. データ
+===================================== */
 
 let attempts = [];
 let questions = [];
 let filteredAttempts = [];
 
-/* =========================
-   HTMLエスケープ
-========================= */
 
-function escapeHTML(v) {
-  return String(v ?? "").replace(/[&<>"']/g, c => ({
-    "&": "&amp;",
-    "<": "&lt;",
-    ">": "&gt;",
-    '"': "&quot;",
-    "'": "&#39;"
-  }[c]));
+/* =====================================
+   3. HTML安全処理
+===================================== */
+
+function escapeHTML(value) {
+  return String(value ?? "").replace(
+    /[&<>"']/g,
+    c => ({
+      "&": "&amp;",
+      "<": "&lt;",
+      ">": "&gt;",
+      '"': "&quot;",
+      "'": "&#39;"
+    }[c])
+  );
 }
 
-function showMessage(t) {
-  document.getElementById("message").textContent = t;
+
+function showMessage(message) {
+  document.getElementById("message").textContent = message;
 }
 
-/* =========================
-   参考平均点
-========================= */
+
+/* =====================================
+   4. 参考平均点
+===================================== */
 
 function seededNumber(seed, min, max, salt) {
   let h = 2166136261;
-  const s = String(seed) + "|" + salt;
 
-  for (let i = 0; i < s.length; i++) {
-    h ^= s.charCodeAt(i);
+  const value = String(seed) + "|" + salt;
+
+  for (let i = 0; i < value.length; i++) {
+    h ^= value.charCodeAt(i);
     h = Math.imul(h, 16777619);
   }
 
@@ -425,36 +412,83 @@ function seededNumber(seed, min, max, salt) {
   );
 }
 
+
 function referenceStats(examId) {
+  const average = seededNumber(
+    examId,
+    60,
+    80,
+    "average"
+  );
+
   return {
-    average: seededNumber(examId, 60, 80, "average")
+    average: average
   };
 }
 
-/* =========================
-   100点満点の得点計算
-========================= */
 
-function scoreFor(a) {
-  const qs = questions.filter(q => q.exam_id === a.exam_id);
+/* =====================================
+   5. 試験の問題数を取得
+===================================== */
 
-  const total =
-    qs.length ||
-    Number(a.total_questions) ||
-    0;
+function questionsForAttempt(a) {
+  const examId = String(a.exam_id || "");
 
-  if (!total || a.correct_count == null) {
-    return null;
+  if (!examId) {
+    return [];
   }
 
-  return Math.round(
-    Number(a.correct_count) / total * 100
+  return questions.filter(q =>
+    String(q.exam_id || "") === examId
   );
 }
 
-/* =========================
-   総合講評
-========================= */
+
+function questionCountFor(a) {
+  const matchingQuestions = questionsForAttempt(a);
+
+  if (matchingQuestions.length > 0) {
+    return matchingQuestions.length;
+  }
+
+  return (
+    Number(a.total_questions) ||
+    Number(a.question_count) ||
+    0
+  );
+}
+
+
+/* =====================================
+   6. 得点計算
+===================================== */
+
+function scoreFor(a) {
+  if (
+    a.correct_count === null ||
+    a.correct_count === undefined
+  ) {
+    return null;
+  }
+
+  const total = questionCountFor(a);
+  const correct = Number(a.correct_count);
+
+  if (
+    !total ||
+    !Number.isFinite(correct) ||
+    correct < 0
+  ) {
+    return null;
+  }
+
+  return Math.round(correct / total * 100);
+}
+
+
+/* =====================================
+   7. 講評
+===================================== */
 
 function commentFor(score) {
 
@@ -467,7 +501,7 @@ function commentFor(score) {
   }
 
   if (score >= 60) {
-    return "今回の試験、お疲れさまでした。理解できている内容がある一方、もう少し練習を重ねたい分野も見つかったと思います。間違えた問題を見直し、なぜその答えになるのか説明できるようにしましょう。毎日の積み重ねが次の成長につながります。";
+    return "今回の試験、お疲れさまでした。理解できている内容がある一方で、もう少し練習を重ねたい分野も見つかったと思います。結果だけで判断せず、間違えた問題を見直し、なぜその答えになるのかを説明できるようにしていきましょう。毎日の小さな積み重ねが大切です。次回の成長を期待しています。";
   }
 
   if (score >= 40) {
@@ -477,9 +511,10 @@ function commentFor(score) {
   return "今回の試験は、これからの学習方法を見直す良い機会です。思うような結果でなくても諦める必要はありません。基本事項を確認し、解けなかった問題を一問ずつ整理しましょう。分からないところをそのままにせず、少しずつ理解を積み重ねることが大切です。次回の挑戦を応援しています。";
 }
 
-/* =========================
-   ログイン
-========================= */
+
+/* =====================================
+   8. ログイン
+===================================== */
 
 async function login() {
 
@@ -489,44 +524,49 @@ async function login() {
   const password =
     document.getElementById("password").value;
 
-  const btn =
+  const button =
     document.getElementById("loginBtn");
 
   if (!email || !password) {
-    showMessage("メールアドレスとパスワードを入力してください。");
+    showMessage(
+      "メールアドレスとパスワードを入力してください。"
+    );
     return;
   }
 
-  btn.disabled = true;
+  button.disabled = true;
   showMessage("ログインしています...");
 
   try {
 
     const { error } = await db.auth.signInWithPassword({
-      email,
-      password
+      email: email,
+      password: password
     });
 
-    if (error) throw error;
+    if (error) {
+      throw error;
+    }
 
     await checkAdmin();
 
-  } catch (e) {
+  } catch (error) {
 
     showMessage(
-      "ログインできませんでした。\n" + e.message
+      "ログインできませんでした。\n" + error.message
     );
 
   } finally {
 
-    btn.disabled = false;
+    button.disabled = false;
 
   }
 }
 
-/* =========================
-   管理者確認
-========================= */
+
+/* =====================================
+   9. 管理者確認
+===================================== */
 
 async function checkAdmin() {
 
@@ -560,20 +600,25 @@ async function checkAdmin() {
   await loadResults();
 }
 
-/* =========================
-   結果取得
-========================= */
+
+/* =====================================
+   10. 結果取得
+===================================== */
 
 async function loadResults() {
 
-  const { data, error } =
-    await db.rpc("admin_get_results");
+  const {
+    data,
+    error
+  } = await db.rpc("admin_get_results");
 
   if (error) {
+
     alert(
       "結果を取得できませんでした。\n" +
       error.message
     );
+
     return;
   }
 
@@ -593,37 +638,44 @@ async function loadResults() {
       !a.submitted_at && a.status !== "submitted"
     ).length;
 
-  const f = document.getElementById("examFilter");
-  const old = f.value;
 
-  const map = new Map();
+  const filter =
+    document.getElementById("examFilter");
+
+  const oldValue = filter.value;
+
+  const examMap = new Map();
 
   attempts.forEach(a => {
-    map.set(a.exam_code, a.exam_title);
+    examMap.set(
+      a.exam_code || a.exam_id || a.exam_title,
+      a.exam_title || a.exam_code || "試験名不明"
+    );
   });
 
-  f.innerHTML =
+  filter.innerHTML =
     '<option value="">すべての試験</option>';
 
-  map.forEach((title, code) => {
+  examMap.forEach((title, code) => {
 
-    const o = document.createElement("option");
+    const option = document.createElement("option");
 
-    o.value = code || "";
-    o.textContent = title || code || "試験名不明";
+    option.value = code || "";
+    option.textContent = title;
 
-    f.appendChild(o);
+    filter.appendChild(option);
 
   });
 
-  f.value = old;
+  filter.value = oldValue;
 
   renderResults();
 }
 
-/* =========================
-   成績一覧表示
-========================= */
+
+/* =====================================
+   11. 成績一覧表示
+===================================== */
 
 function renderResults() {
 
@@ -634,12 +686,22 @@ function renderResults() {
     document.getElementById("memberFilter")
       .value.trim().toLowerCase();
 
-  filteredAttempts = attempts.filter(a =>
-    (!exam || a.exam_code === exam) &&
-    (
+  filteredAttempts = attempts.filter(a => {
+
+    const examValue =
+      a.exam_code || a.exam_id || a.exam_title || "";
+
+    const examMatch =
+      !exam || String(examValue) === String(exam);
+
+    const searchText =
       `${a.member_number || ""} ${a.full_name || ""}`
-    ).toLowerCase().includes(keyword)
-  );
+        .toLowerCase();
+
+    return examMatch && searchText.includes(keyword);
+
+  });
+
 
   const body =
     document.getElementById("resultsBody");
@@ -651,7 +713,8 @@ function renderResults() {
       ? ""
       : "該当する受験記録はありません。";
 
-  filteredAttempts.forEach((a, i) => {
+
+  filteredAttempts.forEach((a, index) => {
 
     const submitted =
       !!a.submitted_at || a.status === "submitted";
@@ -662,161 +725,201 @@ function renderResults() {
       a.exam_id || a.exam_code || a.exam_title
     );
 
-    const diff =
-      score == null ? null : score - stats.average;
+    const difference =
+      score === null
+        ? null
+        : score - stats.average;
 
-    const tr = document.createElement("tr");
 
-    tr.innerHTML = `
+    const row = document.createElement("tr");
+
+    row.innerHTML = `
       <td>${escapeHTML(a.member_number || "-")}</td>
+
       <td>${escapeHTML(a.full_name || "氏名不明")}</td>
+
       <td>${escapeHTML(a.exam_title || "-")}</td>
+
       <td>${escapeHTML(a.correct_count ?? "-")}</td>
-      <td>${score == null ? "-" : score + "点／100点"}</td>
-      <td>${stats.average}点</td>
+
       <td>
-        ${diff == null
-          ? "-"
-          : (diff >= 0 ? "+" : "") + diff + "点"}
+        ${score === null ? "-" : score + "点／100点"}
       </td>
-      <td>${submitted ? "提出済み" : "受験中"}</td>
+
+      <td>${stats.average}点</td>
+
+      <td>
+        ${
+          difference === null
+            ? "-"
+            : (difference >= 0 ? "+" : "") +
+              difference + "点"
+        }
+      </td>
+
+      <td>
+        ${submitted ? "提出済み" : "受験中"}
+      </td>
 
       <td class="no-print">
-        <button onclick="toggleDetail(${i})">
+        <button onclick="toggleDetail(${index})">
           詳細
         </button>
 
-        <button
-          class="green"
-          onclick="printIndividual(${i})"
-          ${submitted ? "" : "disabled"}
-        >
-          成績表を印刷
+        <button class="green"
+          onclick="printIndividual(${index})">
+          個人票印刷
         </button>
       </td>
     `;
 
-    body.appendChild(tr);
+    body.appendChild(row);
 
-    const dr = document.createElement("tr");
 
-    dr.id = "detail-" + i;
-    dr.className = "hidden";
+    const detailRow = document.createElement("tr");
 
-    const td = document.createElement("td");
+    detailRow.id = "detail-" + index;
+    detailRow.className = "hidden";
 
-    td.colSpan = 9;
-    td.innerHTML = detailHTML(a, score, stats);
+    const detailCell = document.createElement("td");
 
-    dr.appendChild(td);
-    body.appendChild(dr);
+    detailCell.colSpan = 9;
+    detailCell.innerHTML = detailHTML(a, score, stats);
+
+    detailRow.appendChild(detailCell);
+
+    body.appendChild(detailRow);
 
   });
-}
-
-/* =========================
-   詳細表示
-========================= */
-
-function toggleDetail(i) {
-
-  document.getElementById("detail-" + i)
-    .classList.toggle("hidden");
 
 }
 
-/* =========================
-   日付表示
-========================= */
 
-function formatDate(v) {
+/* =====================================
+   12. 詳細表示
+===================================== */
 
-  if (!v) return "未提出";
+function toggleDetail(index) {
 
-  const d = new Date(v);
-
-  return isNaN(d.getTime())
-    ? "-"
-    : d.toLocaleString("ja-JP");
+  document.getElementById(
+    "detail-" + index
+  ).classList.toggle("hidden");
 
 }
 
-/* =========================
-   回答データ
-========================= */
+
+/* =====================================
+   13. 日時表示
+===================================== */
+
+function formatDate(value) {
+
+  if (!value) {
+    return "未提出";
+  }
+
+  const date = new Date(value);
+
+  if (isNaN(date.getTime())) {
+    return "-";
+  }
+
+  return date.toLocaleString("ja-JP", {
+    timeZone: "Asia/Tokyo"
+  });
+
+}
+
+
+/* =====================================
+   14. 回答取得
+===================================== */
 
 function getAnswerMap(a) {
 
-  return a.answers && typeof a.answers === "object"
-    ? a.answers
-    : {};
+  return (
+    a.answers && typeof a.answers === "object"
+      ? a.answers
+      : {}
+  );
 
 }
+
 
 function selectedAnswer(a, q) {
 
-  const ans = getAnswerMap(a);
+  const answers = getAnswerMap(a);
 
-  let v = ans[q.question_id || q.id];
+  let value = answers[q.question_id || q.id];
 
-  if (v === undefined) {
-    v = ans[String(q.question_number)];
+  if (value === undefined) {
+    value = answers[String(q.question_number)];
   }
 
-  if (v === undefined) {
-    v = ans[q.question_number - 1];
+  if (value === undefined) {
+    value = answers[q.question_number - 1];
   }
 
-  if (v && typeof v === "object") {
-    v =
-      v.answer ??
-      v.selected ??
-      v.value ??
-      JSON.stringify(v);
+  if (value && typeof value === "object") {
+    value =
+      value.answer ??
+      value.selected ??
+      value.value ??
+      JSON.stringify(value);
   }
 
-  return v;
+  return value;
+
 }
 
-/* =========================
-   回答内容・正誤表示
-========================= */
+
+/* =====================================
+   15. 回答内容表示
+===================================== */
 
 function renderAnswerList(a) {
 
-  const qs = questions
-    .filter(q => q.exam_id === a.exam_id)
-    .sort((x, y) =>
-      x.question_number - y.question_number
-    );
+  const qs = questionsForAttempt(a).sort(
+    (x, y) =>
+      Number(x.question_number) -
+      Number(y.question_number)
+  );
 
   if (!qs.length) {
+
     return `
-      <p>問題情報を取得できませんでした。</p>
+      <p class="small">
+        問題情報を取得できませんでした。
+      </p>
       <pre>${escapeHTML(
         JSON.stringify(a.answers || {}, null, 2)
       )}</pre>
     `;
+
   }
+
 
   return qs.map(q => {
 
-    const sel = selectedAnswer(a, q);
+    const selected = selectedAnswer(a, q);
+
     const correct = q.correct_answer;
 
     const answered =
-      sel !== undefined &&
-      sel !== null &&
-      sel !== "";
+      selected !== undefined &&
+      selected !== null &&
+      selected !== "";
 
-    const ok =
+    const isCorrect =
       answered &&
-      String(sel) === String(correct);
+      String(selected) === String(correct);
 
     return `
       <div class="answer">
 
-        <b>第${escapeHTML(q.question_number)}問</b>
+        <b>
+          第${escapeHTML(q.question_number)}問
+        </b>
 
         <p>
           ${escapeHTML(q.question_text || "")}
@@ -824,7 +927,7 @@ function renderAnswerList(a) {
 
         <p>
           受験者の回答：
-          ${answered ? escapeHTML(sel) : "未回答"}
+          ${answered ? escapeHTML(selected) : "未回答"}
         </p>
 
         <p>
@@ -832,30 +935,39 @@ function renderAnswerList(a) {
           ${escapeHTML(correct ?? "未設定")}
         </p>
 
-        <p class="${ok ? "good" : "bad"}">
-          ${!answered
-            ? "未回答"
-            : ok
-              ? "正解"
-              : "不正解"}
+        <p class="${isCorrect ? "good" : "bad"}">
+          ${
+            !answered
+              ? "未回答"
+              : isCorrect
+                ? "正解"
+                : "不正解"
+          }
         </p>
 
       </div>
     `;
 
   }).join("");
+
 }
 
-/* =========================
-   管理者の詳細画面
-========================= */
+
+/* =====================================
+   16. 詳細成績
+===================================== */
 
 function detailHTML(a, score, stats) {
 
-  const diff =
-    score == null ? null : score - stats.average;
+  const difference =
+    score === null
+      ? null
+      : score - stats.average;
+
+  const total = questionCountFor(a);
 
   return `
+
     <div class="card">
 
       <p>
@@ -884,13 +996,18 @@ function detailHTML(a, score, stats) {
       </p>
 
       <p>
+        <b>問題数：</b>
+        ${total || "-"}問
+      </p>
+
+      <p>
         <b>正答数：</b>
         ${escapeHTML(a.correct_count ?? "-")}
       </p>
 
       <p>
         <b>得点：</b>
-        ${score == null ? "-" : score + "点／100点"}
+        ${score === null ? "採点不可" : score + "点／100点"}
       </p>
 
       <p>
@@ -900,31 +1017,42 @@ function detailHTML(a, score, stats) {
 
       <p>
         <b>平均点との差：</b>
-        ${diff == null
-          ? "-"
-          : (diff >= 0 ? "+" : "") + diff + "点"}
+        ${
+          difference === null
+            ? "-"
+            : (difference >= 0 ? "+" : "") +
+              difference + "点"
+        }
       </p>
 
       <div class="comment">
+
         <b>講評</b>
+
         <p>
-          ${score == null
-            ? "提出後に採点結果が表示されます。"
-            : commentFor(score)}
+          ${
+            score === null
+              ? "得点を計算できません。問題数と正答数のデータを確認してください。"
+              : commentFor(score)
+          }
         </p>
+
       </div>
 
-      <h3>回答内容</h3>
+      <h3>回答内容・正誤</h3>
 
       ${renderAnswerList(a)}
 
     </div>
+
   `;
+
 }
 
-/* =========================
-   成績一覧の印刷
-========================= */
+
+/* =====================================
+   17. 成績一覧印刷
+===================================== */
 
 function printList() {
 
@@ -937,24 +1065,25 @@ function printList() {
     return;
   }
 
-  const w = window.open("", "_blank");
-
-  if (!w) {
-    alert(
-      "印刷画面が開けません。ポップアップを許可してください。"
-    );
-    return;
-  }
-
   const html = `
-    <table>
+
+    <div class="print-company">
+      株式会社ゲートスクエア
+    </div>
+
+    <div class="print-title">
+      オルビステスト 成績一覧
+    </div>
+
+    <table class="list-table">
+
       <thead>
         <tr>
           <th>受験番号</th>
           <th>氏名</th>
           <th>試験</th>
           <th>正答数</th>
-          <th>得点（100点満点）</th>
+          <th>得点</th>
           <th>参考平均</th>
           <th>平均差</th>
           <th>提出日時</th>
@@ -962,61 +1091,63 @@ function printList() {
       </thead>
 
       <tbody>
+
         ${rows.map(a => {
 
-          const sc = scoreFor(a);
+          const score = scoreFor(a);
 
-          const st = referenceStats(
+          const stats = referenceStats(
             a.exam_id || a.exam_code || a.exam_title
           );
 
-          const d =
-            sc == null
+          const difference =
+            score === null
               ? "-"
-              : (sc - st.average >= 0 ? "+" : "") +
-                (sc - st.average) + "点";
+              : (score - stats.average >= 0 ? "+" : "") +
+                (score - stats.average) + "点";
 
           return `
+
             <tr>
               <td>${escapeHTML(a.member_number || "-")}</td>
               <td>${escapeHTML(a.full_name || "-")}</td>
               <td>${escapeHTML(a.exam_title || "-")}</td>
               <td>${escapeHTML(a.correct_count ?? "-")}</td>
-              <td>${sc == null ? "-" : sc + "点／100点"}</td>
-              <td>${st.average}点</td>
-              <td>${d}</td>
+              <td>${score === null ? "-" : score + "点／100点"}</td>
+              <td>${stats.average}点</td>
+              <td>${difference}</td>
               <td>${escapeHTML(formatDate(a.submitted_at))}</td>
             </tr>
+
           `;
 
         }).join("")}
+
       </tbody>
+
     </table>
+
+    <div class="print-footer">
+      株式会社ゲートスクエア
+    </div>
+
   `;
 
-  w.document.write(
-    printDocument("オルビステスト 成績一覧", html)
-  );
+  openPrintWindow("オルビステスト 成績一覧", html);
 
-  w.document.close();
-  w.focus();
-
-  setTimeout(() => w.print(), 300);
 }
 
-/* =========================
-   個人成績表の印刷
-   受験者向けと同じ項目構成
-========================= */
+
+/* =====================================
+   18. 個人票印刷
+   受験者用PDFと同じレイアウト
+===================================== */
 
 function printIndividual(index) {
 
   const a = filteredAttempts[index];
 
-  if (!a) return;
-
-  if (!a.submitted_at && a.status !== "submitted") {
-    alert("この受験者はまだ試験を提出していません。");
+  if (!a) {
     return;
   }
 
@@ -1026,294 +1157,313 @@ function printIndividual(index) {
     a.exam_id || a.exam_code || a.exam_title
   );
 
-  const diff =
-    score == null ? null : score - stats.average;
+  const total = questionCountFor(a);
+
+  const correct = Number(a.correct_count || 0);
+
+  const difference =
+    score === null
+      ? null
+      : score - stats.average;
+
+  const examDate =
+    a.submitted_at || a.started_at;
 
   const html = `
-    <div class="report">
 
-      <h2 class="report-title">
-        ORBIS TEST 成績表
-      </h2>
+    <div class="print-company">
+      株式会社ゲートスクエア
+    </div>
 
-      <div class="company">
-        株式会社ゲートスクエア
-      </div>
+    <div class="print-title">
+      オルビステスト 成績表
+    </div>
 
-      <table class="profile">
-        <tbody>
+    <table class="result-table">
 
-          <tr>
-            <th>受験番号</th>
-            <td>${escapeHTML(a.member_number || "-")}</td>
+      <tbody>
 
-            <th>氏名</th>
-            <td>${escapeHTML(a.full_name || "-")}</td>
-          </tr>
+        <tr>
+          <th>受験者氏名</th>
+          <td>${escapeHTML(a.full_name || "氏名不明")}</td>
+        </tr>
 
-          <tr>
-            <th>試験名</th>
-            <td colspan="3">
-              ${escapeHTML(a.exam_title || "-")}
-            </td>
-          </tr>
+        <tr>
+          <th>受験番号</th>
+          <td>${escapeHTML(a.member_number || "-")}</td>
+        </tr>
 
-          <tr>
-            <th>試験開始日時</th>
-            <td>${escapeHTML(formatDate(a.started_at))}</td>
+        <tr>
+          <th>試験名</th>
+          <td>${escapeHTML(a.exam_title || "-")}</td>
+        </tr>
 
-            <th>提出日時</th>
-            <td>${escapeHTML(formatDate(a.submitted_at))}</td>
-          </tr>
+        <tr>
+          <th>受験日時</th>
+          <td>${escapeHTML(formatDate(examDate))}</td>
+        </tr>
 
-        </tbody>
-      </table>
+        <tr>
+          <th>問題数</th>
+          <td>${total || "-"}問</td>
+        </tr>
 
-      <h3>成績</h3>
+        <tr>
+          <th>正答数</th>
+          <td>${correct}問</td>
+        </tr>
 
-      <table class="score-table">
-        <thead>
-          <tr>
-            <th>正答数</th>
-            <th>得点</th>
-            <th>参考平均点</th>
-            <th>平均点との差</th>
-          </tr>
-        </thead>
+        <tr>
+          <th>得点（100点満点）</th>
+          <td>
+            ${score === null ? "採点不可" : score + "点／100点"}
+          </td>
+        </tr>
 
-        <tbody>
-          <tr>
-            <td>
-              ${escapeHTML(a.correct_count ?? "-")}問
-            </td>
+        <tr>
+          <th>参考平均点</th>
+          <td>${stats.average}点（参考）</td>
+        </tr>
 
-            <td class="main-score">
-              ${score == null
+        <tr>
+          <th>平均点との差</th>
+          <td>
+            ${
+              difference === null
                 ? "-"
-                : score + "点／100点"}
-            </td>
+                : (difference >= 0 ? "+" : "") +
+                  difference + "点"
+            }
+          </td>
+        </tr>
 
-            <td>${stats.average}点</td>
+      </tbody>
 
-            <td>
-              ${diff == null
-                ? "-"
-                : (diff >= 0 ? "+" : "") + diff + "点"}
-            </td>
-          </tr>
-        </tbody>
-      </table>
+    </table>
 
-      <h3>総合講評</h3>
 
-      <div class="comment">
-        ${score == null
-          ? "採点結果はまだありません。"
-          : commentFor(score)}
-      </div>
+    <div class="print-score">
 
-      <h3>回答内容・正誤</h3>
-
-      ${renderAnswerList(a)}
-
-      <div class="footer">
-        ORBIS CBT SYSTEM
-      </div>
+      ${
+        score === null
+          ? "採点結果を確認できません。"
+          : `${score}点／100点（正答数 ${correct} / ${total}問）`
+      }
 
     </div>
+
+
+    <div class="print-comment">
+
+      <b>講評：</b>
+
+      ${
+        score === null
+          ? "得点を計算できません。問題数と正答数のデータを確認してください。"
+          : commentFor(score)
+      }
+
+    </div>
+
+
+    <div class="print-footer">
+      株式会社ゲートスクエア
+    </div>
+
   `;
 
-  const w = window.open("", "_blank");
+  openPrintWindow("オルビステスト 成績表", html);
 
-  if (!w) {
+}
+
+
+/* =====================================
+   19. 印刷画面
+===================================== */
+
+function openPrintWindow(title, body) {
+
+  const win = window.open("", "_blank");
+
+  if (!win) {
+
     alert(
-      "印刷画面が開けません。ポップアップを許可してください。"
+      "印刷画面が開けません。\n" +
+      "ブラウザのポップアップを許可してください。"
     );
+
     return;
   }
 
-  w.document.write(
-    printDocument("ORBIS TEST 成績表", html)
+  win.document.write(
+    printDocument(title, body)
   );
 
-  w.document.close();
-  w.focus();
+  win.document.close();
+  win.focus();
 
-  setTimeout(() => w.print(), 300);
+  setTimeout(() => {
+    win.print();
+  }, 300);
+
 }
 
-/* =========================
-   印刷ページ共通デザイン
-========================= */
+
+/* =====================================
+   20. 印刷用HTML
+===================================== */
 
 function printDocument(title, body) {
 
-  return `<!DOCTYPE html>
-  <html lang="ja">
+  return `
 
-  <head>
-    <meta charset="UTF-8">
+<!DOCTYPE html>
+<html lang="ja">
 
-    <title>${escapeHTML(title)}</title>
+<head>
 
-    <style>
+<meta charset="UTF-8">
 
-      * {
-        box-sizing: border-box;
-      }
+<title>${escapeHTML(title)}</title>
 
-      body {
-        font-family: Arial, "Noto Sans JP", sans-serif;
-        color: #172033;
-        background: white;
-        margin: 0;
-        padding: 20px;
-      }
+<style>
 
-      .report {
-        max-width: 900px;
-        margin: 0 auto;
-      }
-
-      h1, h2, h3 {
-        color: #172554;
-      }
-
-      .report-title {
-        text-align: center;
-        font-size: 25px;
-        margin: 10px 0 5px;
-        letter-spacing: 2px;
-      }
-
-      .company {
-        text-align: center;
-        font-size: 13px;
-        margin-bottom: 25px;
-      }
-
-      h3 {
-        font-size: 17px;
-        border-left: 5px solid #1d4ed8;
-        padding-left: 10px;
-        margin-top: 25px;
-      }
-
-      table {
-        width: 100%;
-        border-collapse: collapse;
-        margin: 15px 0;
-      }
-
-      th, td {
-        border: 1px solid #64748b;
-        padding: 11px;
-        font-size: 13px;
-        text-align: left;
-      }
-
-      th {
-        background: #eff6ff;
-        font-weight: bold;
-      }
-
-      .profile th {
-        width: 18%;
-      }
-
-      .main-score {
-        font-size: 23px;
-        font-weight: bold;
-        text-align: center;
-      }
-
-      .score-table td {
-        text-align: center;
-      }
-
-      .comment {
-        border: 1px solid #94a3b8;
-        background: #f8fafc;
-        border-radius: 8px;
-        padding: 18px;
-        line-height: 2;
-        font-size: 13px;
-        margin: 16px 0;
-      }
-
-      .answer {
-        border-bottom: 1px solid #cbd5e1;
-        padding: 12px 5px;
-        line-height: 1.7;
-        font-size: 12px;
-        page-break-inside: avoid;
-      }
-
-      .good {
-        color: #15803d;
-        font-weight: bold;
-      }
-
-      .bad {
-        color: #dc2626;
-        font-weight: bold;
-      }
-
-      .footer {
-        text-align: right;
-        margin-top: 30px;
-        font-size: 11px;
-        color: #64748b;
-      }
-
-      pre {
-        white-space: pre-wrap;
-        overflow-wrap: anywhere;
-      }
-
-      @page {
-        size: A4 portrait;
-        margin: 15mm;
-      }
-
-      @media print {
-
-        body {
-          padding: 0;
-        }
-
-        .report {
-          max-width: none;
-        }
-
-        h3 {
-          break-after: avoid;
-        }
-
-        .comment {
-          break-inside: avoid;
-        }
-
-        .answer {
-          break-inside: avoid;
-        }
-
-      }
-
-    </style>
-
-  </head>
-
-  <body>
-    ${body}
-  </body>
-
-  </html>`;
+* {
+  box-sizing: border-box;
 }
 
-/* =========================
-   ログアウト
-========================= */
+@page {
+  size: A4 portrait;
+  margin: 18mm 20mm;
+}
+
+body {
+  font-family: Arial, "Noto Sans JP", sans-serif;
+  color: #111;
+  background: white;
+  margin: 0;
+  padding: 0;
+  font-size: 13px;
+}
+
+.print-sheet {
+  width: 100%;
+  max-width: 170mm;
+  margin: 0 auto;
+}
+
+.print-company {
+  text-align: center;
+  font-size: 15px;
+  font-weight: bold;
+  margin-bottom: 30px;
+}
+
+.print-title {
+  text-align: center;
+  font-size: 23px;
+  font-weight: bold;
+  letter-spacing: 3px;
+  margin-bottom: 35px;
+}
+
+.result-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-bottom: 25px;
+}
+
+.result-table th,
+.result-table td {
+  border: none;
+  padding: 10px 8px;
+  font-size: 13px;
+  text-align: left;
+  vertical-align: middle;
+}
+
+.result-table th {
+  width: 38%;
+  font-weight: normal;
+  white-space: nowrap;
+}
+
+.result-table td {
+  font-weight: normal;
+}
+
+.print-score {
+  text-align: center;
+  font-size: 17px;
+  font-weight: bold;
+  margin: 30px 0 25px;
+}
+
+.print-comment {
+  font-size: 13px;
+  line-height: 1.9;
+  margin-top: 20px;
+  text-align: justify;
+}
+
+.print-footer {
+  text-align: right;
+  font-size: 13px;
+  font-weight: bold;
+  margin-top: 55px;
+}
+
+.list-table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 25px;
+}
+
+.list-table th,
+.list-table td {
+  border: 1px solid #555;
+  padding: 6px;
+  font-size: 10px;
+  text-align: left;
+}
+
+.list-table th {
+  background: #f1f5f9;
+}
+
+@media print {
+
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+}
+
+</style>
+
+</head>
+
+<body>
+
+<div class="print-sheet">
+
+${body}
+
+</div>
+
+</body>
+
+</html>
+
+`;
+
+}
+
+
+/* =====================================
+   21. ログアウト
+===================================== */
 
 async function logout() {
 
@@ -1323,9 +1473,10 @@ async function logout() {
 
 }
 
-/* =========================
-   初期化
-========================= */
+
+/* =====================================
+   22. 初期化
+===================================== */
 
 async function initialize() {
 
@@ -1338,6 +1489,7 @@ async function initialize() {
   }
 
 }
+
 
 db.auth.onAuthStateChange(event => {
 
@@ -1353,14 +1505,16 @@ db.auth.onAuthStateChange(event => {
 
 });
 
-document.getElementById("password")
-  .addEventListener("keydown", e => {
 
-    if (e.key === "Enter") {
+document.getElementById("password")
+  .addEventListener("keydown", event => {
+
+    if (event.key === "Enter") {
       login();
     }
 
   });
+
 
 initialize();
 
