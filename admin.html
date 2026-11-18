@@ -5,1512 +5,328 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>ORBIS TEST 管理者ページ</title>
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
-
 <style>
-* {
-  box-sizing: border-box;
+*{box-sizing:border-box}
+body{margin:0;background:#f1f5f9;color:#172033;font-family:Arial,"Noto Sans JP",sans-serif}
+header{background:#172554;color:#fff;padding:20px}
+header h1{margin:0;font-size:22px}
+main{max-width:1250px;margin:25px auto;padding:0 15px}
+.card{background:#fff;border-radius:12px;padding:20px;margin-bottom:18px;box-shadow:0 2px 8px #00000010}
+h2{font-size:19px;margin-top:0}
+input,select{width:100%;padding:12px;border:1px solid #cbd5e1;border-radius:8px;margin:7px 0 14px;font-size:16px}
+button{background:#1d4ed8;color:#fff;border:0;border-radius:8px;padding:11px 16px;font-size:14px;cursor:pointer;margin:3px}
+button.secondary{background:#475569}
+button.green{background:#0f766e}
+button:disabled{opacity:.5}
+.hidden{display:none!important}
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:12px}
+.stat{background:#eff6ff;border-radius:10px;padding:16px}
+.stat strong{display:block;font-size:25px;margin-top:8px}
+.table-wrap{overflow-x:auto}
+table{border-collapse:collapse;width:100%;background:#fff}
+th,td{padding:11px;border-bottom:1px solid #e2e8f0;text-align:left;font-size:14px;vertical-align:top}
+th{background:#f8fafc;white-space:nowrap}
+details{margin:10px 0;background:#f8fafc;padding:12px;border-radius:8px}
+.answer{padding:12px;border-bottom:1px solid #e2e8f0;line-height:1.7}
+.good{color:#15803d;font-weight:bold}
+.bad{color:#dc2626;font-weight:bold}
+.small{font-size:13px;color:#64748b}
+.muted{color:#64748b}
+.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center}
+.comment{line-height:1.9;background:#f8fafc;padding:14px;border-radius:8px;margin-top:12px}
+.stats-note{font-size:12px;color:#64748b;margin-top:8px}
+.error{white-space:pre-wrap;color:#b91c1c}
+@media print{
+@page{size:A4 landscape;margin:12mm}
+body{background:#fff}
+header,#loginCard,.no-print{display:none!important}
+main{max-width:none;margin:0;padding:0}
+.card{box-shadow:none;border:0;padding:0}
+.print-heading{display:block!important}
+table{font-size:10px}
+th,td{font-size:10px;padding:6px}
+.print-only{display:block!important}
+.print-break{page-break-before:always}
 }
-
-body {
-  margin: 0;
-  background: #f1f5f9;
-  color: #172033;
-  font-family: Arial, "Noto Sans JP", sans-serif;
-}
-
-header {
-  background: #172554;
-  color: white;
-  padding: 20px;
-}
-
-header h1 {
-  margin: 0;
-  font-size: 22px;
-}
-
-main {
-  max-width: 1200px;
-  margin: 25px auto;
-  padding: 0 15px;
-}
-
-.card {
-  background: white;
-  border-radius: 12px;
-  padding: 20px;
-  margin-bottom: 18px;
-  box-shadow: 0 2px 8px #00000010;
-}
-
-h2 {
-  font-size: 19px;
-  margin-top: 0;
-}
-
-input, select {
-  width: 100%;
-  padding: 12px;
-  border: 1px solid #cbd5e1;
-  border-radius: 8px;
-  margin: 7px 0 14px;
-  font-size: 16px;
-}
-
-button {
-  background: #1d4ed8;
-  color: white;
-  border: 0;
-  border-radius: 8px;
-  padding: 11px 16px;
-  font-size: 14px;
-  cursor: pointer;
-  margin: 3px;
-}
-
-button.secondary {
-  background: #475569;
-}
-
-button.green {
-  background: #0f766e;
-}
-
-button:disabled {
-  opacity: .5;
-}
-
-.hidden {
-  display: none !important;
-}
-
-.stats {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 12px;
-}
-
-.stat {
-  background: #eff6ff;
-  border-radius: 10px;
-  padding: 16px;
-}
-
-.stat strong {
-  display: block;
-  font-size: 25px;
-  margin-top: 8px;
-}
-
-table {
-  border-collapse: collapse;
-  width: 100%;
-  background: white;
-}
-
-th, td {
-  padding: 12px;
-  border: 1px solid #e2e8f0;
-  text-align: left;
-  font-size: 14px;
-  vertical-align: top;
-}
-
-th {
-  background: #f8fafc;
-}
-
-.table-wrap {
-  overflow-x: auto;
-}
-
-details {
-  margin: 10px 0;
-  background: #f8fafc;
-  padding: 12px;
-  border-radius: 8px;
-}
-
-.answer {
-  padding: 12px;
-  border-bottom: 1px solid #e2e8f0;
-  line-height: 1.7;
-  background: white;
-  margin-bottom: 8px;
-}
-
-.good {
-  color: #15803d;
-  font-weight: bold;
-}
-
-.bad {
-  color: #dc2626;
-  font-weight: bold;
-}
-
-#message {
-  white-space: pre-wrap;
-  color: #b91c1c;
-  margin-top: 10px;
-}
-
-.small {
-  font-size: 13px;
-  color: #64748b;
-}
-
-.toolbar {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 8px;
-  align-items: center;
-  justify-content: space-between;
-}
-
-.toolbar h2 {
-  margin-bottom: 8px;
-}
-
-.detail-actions {
-  display: flex;
-  flex-wrap: wrap;
-  gap: 6px;
-  margin: 12px 0;
-}
-
-/* 印刷専用領域 */
-#printArea {
-  display: none;
-}
-
-.print-sheet {
-  background: white;
-  color: #111827;
-  font-family: "Noto Sans JP", "Yu Gothic", sans-serif;
-}
-
-.print-company {
-  text-align: center;
-  font-size: 16px;
-  font-weight: bold;
-  margin-bottom: 8px;
-}
-
-.print-title {
-  text-align: center;
-  font-size: 23px;
-  font-weight: bold;
-  margin: 12px 0 22px;
-}
-
-.print-subtitle {
-  font-size: 17px;
-  font-weight: bold;
-  margin: 22px 0 10px;
-}
-
-.print-table {
-  width: 100%;
-  border-collapse: collapse;
-  margin: 12px 0 20px;
-}
-
-.print-table th,
-.print-table td {
-  border: 1px solid #64748b;
-  padding: 9px;
-  font-size: 12px;
-  overflow-wrap: anywhere;
-}
-
-.print-table th {
-  background: #e2e8f0;
-}
-
-.print-info th {
-  width: 28%;
-}
-
-.print-answer {
-  border: 1px solid #94a3b8;
-  padding: 10px;
-  margin: 10px 0;
-  break-inside: avoid;
-  page-break-inside: avoid;
-  font-size: 12px;
-  line-height: 1.7;
-}
-
-.print-answer p {
-  margin: 5px 0;
-}
-
-.print-correct {
-  color: #15803d;
-  font-weight: bold;
-}
-
-.print-incorrect {
-  color: #dc2626;
-  font-weight: bold;
-}
-
-.print-footer {
-  text-align: right;
-  font-size: 11px;
-  margin-top: 35px;
-}
-
-.print-date {
-  text-align: right;
-  font-size: 11px;
-  margin-top: 10px;
-}
-
-/* 印刷設定 */
-@page {
-  size: A4;
-  margin: 12mm;
-}
-
-@media print {
-
-  body {
-    background: white !important;
-    color: black !important;
-  }
-
-  body * {
-    visibility: hidden !important;
-  }
-
-  #printArea,
-  #printArea * {
-    visibility: visible !important;
-  }
-
-  #printArea {
-    display: block !important;
-    position: absolute;
-    left: 0;
-    top: 0;
-    width: 100%;
-    margin: 0;
-    padding: 0;
-  }
-
-  .print-sheet {
-    display: block !important;
-    width: 100%;
-  }
-
-  .no-print {
-    display: none !important;
-  }
-
-  .print-table {
-    page-break-inside: auto;
-  }
-
-  .print-table tr {
-    page-break-inside: avoid;
-    break-inside: avoid;
-  }
-}
-
-@media screen {
-  #printArea {
-    display: none;
-  }
-}
+.print-only{display:none}
+.print-heading{display:none}
 </style>
 </head>
-
 <body>
-
-<header class="no-print">
-  <h1>ORBIS TEST 管理者ページ</h1>
-  <div class="small" style="color:#dbeafe">
-    受験結果・回答管理・成績表印刷
-  </div>
+<header>
+<h1>ORBIS TEST 管理者ページ</h1>
+<div class="small" style="color:#dbeafe">受験結果・成績・回答管理</div>
 </header>
-
 <main>
+<section id="loginCard" class="card">
+<h2>管理者ログイン</h2>
+<label>メールアドレス</label>
+<input id="email" type="email" autocomplete="username" placeholder="登録済みメールアドレス">
+<label>パスワード</label>
+<input id="password" type="password" autocomplete="current-password" placeholder="パスワード">
+<button id="loginBtn" onclick="login()">ログイン</button>
+<div id="message" class="error"></div>
+</section>
 
-  <!-- 管理者ログイン -->
-  <section id="loginCard" class="card no-print">
-    <h2>管理者ログイン</h2>
+<section id="dashboard" class="hidden">
+<div class="card no-print">
+<div class="toolbar" style="justify-content:space-between">
+<h2>受験結果一覧</h2>
+<div>
+<button class="secondary" onclick="loadResults()">最新情報に更新</button>
+<button class="secondary" onclick="logout()">ログアウト</button>
+</div>
+</div>
+<div class="toolbar"><button class="green" onclick="printList()">成績一覧を印刷</button></div>
+</div>
 
-    <label>メールアドレス</label>
-    <input
-      id="email"
-      type="email"
-      placeholder="登録済みメールアドレス"
-    >
+<div class="card stats">
+<div class="stat">受験記録<strong id="totalCount">0</strong></div>
+<div class="stat">提出済み<strong id="submittedCount">0</strong></div>
+<div class="stat">受験中<strong id="ongoingCount">0</strong></div>
+</div>
 
-    <label>パスワード</label>
-    <input
-      id="password"
-      type="password"
-      placeholder="パスワード"
-    >
+<div class="card no-print">
+<h2>絞り込み</h2>
+<label>試験</label>
+<select id="examFilter" onchange="renderResults()"><option value="">すべての試験</option></select>
+<label>受験者検索（受験番号・氏名）</label>
+<input id="memberFilter" placeholder="検索する文字を入力" oninput="renderResults()">
+</div>
 
-    <button id="loginBtn" onclick="login()">
-      ログイン
-    </button>
-
-    <div id="message"></div>
-  </section>
-
-
-  <!-- 管理者ダッシュボード -->
-  <section id="dashboard" class="hidden no-print">
-
-    <div class="card">
-
-      <div class="toolbar">
-        <h2>受験結果一覧</h2>
-
-        <div>
-          <button
-            class="secondary"
-            onclick="logout()"
-          >
-            ログアウト
-          </button>
-        </div>
-      </div>
-
-      <button onclick="loadResults()">
-        最新情報に更新
-      </button>
-
-      <button
-        class="green"
-        onclick="printList()"
-      >
-        成績一覧を印刷
-      </button>
-
-      <p class="small">
-        現在の試験・受験者の絞り込み結果を印刷します。
-      </p>
-
-    </div>
-
-
-    <!-- 集計 -->
-    <div class="card stats">
-
-      <div class="stat">
-        受験記録
-        <strong id="totalCount">0</strong>
-      </div>
-
-      <div class="stat">
-        提出済み
-        <strong id="submittedCount">0</strong>
-      </div>
-
-      <div class="stat">
-        受験中
-        <strong id="ongoingCount">0</strong>
-      </div>
-
-    </div>
-
-
-    <!-- 絞り込み -->
-    <div class="card">
-
-      <h2>絞り込み</h2>
-
-      <label>試験</label>
-
-      <select
-        id="examFilter"
-        onchange="renderResults()"
-      >
-        <option value="">すべての試験</option>
-      </select>
-
-      <label>受験者検索（会員番号・氏名）</label>
-
-      <input
-        id="memberFilter"
-        placeholder="検索する文字を入力"
-        oninput="renderResults()"
-      >
-
-    </div>
-
-
-    <!-- 成績一覧 -->
-    <div class="card">
-
-      <h2>受験者の成績</h2>
-
-      <div class="table-wrap">
-
-        <table>
-
-          <thead>
-            <tr>
-              <th>会員番号</th>
-              <th>氏名</th>
-              <th>試験</th>
-              <th>正答数</th>
-              <th>状態</th>
-              <th>詳細・印刷</th>
-            </tr>
-          </thead>
-
-          <tbody id="resultsBody"></tbody>
-
-        </table>
-
-      </div>
-
-      <div id="emptyMessage" class="small"></div>
-
-    </div>
-
-  </section>
-
-
-  <!-- 印刷専用領域 -->
-  <section id="printArea"></section>
-
+<div class="card">
+<h2>受験者の成績</h2>
+<div class="table-wrap">
+<table>
+<thead>
+<tr>
+<th>受験番号</th><th>氏名</th><th>試験</th><th>正答数</th><th>得点</th><th>参考平均点</th><th>平均差</th><th>状態</th><th class="no-print">操作</th>
+</tr>
+</thead>
+<tbody id="resultsBody"></tbody>
+</table>
+</div>
+<div id="emptyMessage" class="small"></div>
+<p class="stats-note">※参考平均点・参考最高点・参考最低点は、試験ごとにランダム生成した固定の参考値です。実際の受験者全員の集計値ではありません。</p>
+</div>
+</section>
 </main>
-
 
 <script>
 "use strict";
+const SUPABASE_URL="https://hxrtpftlklgwesvanlpk.supabase.co";
+const SUPABASE_KEY="sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
+const ADMIN_ID="4f0efa53-d67b-4d73-9b28-908eadc20525";
+const db=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+let attempts=[],questions=[],filteredAttempts=[];
 
+function escapeHTML(v){
+return String(v??"").replace(/[&<>"']/g,c=>({"&":"&amp;","<":"&lt;",">":"&gt;",'"':"&quot;","'":"&#39;"}[c]));
+}
+function showMessage(t){document.getElementById("message").textContent=t;}
 
-/* =====================================
-   1. Supabase接続
-===================================== */
-
-const SUPABASE_URL =
-  "https://hxrtpftlklgwesvanlpk.supabase.co";
-
-const SUPABASE_KEY =
-  "sb_publishable_b1tG9o1bXMzZBXGHBJZhZA_Ak-KYmnZ";
-
-const ADMIN_ID =
-  "4f0efa53-d67b-4d73-9b28-908eadc20525";
-
-const db = window.supabase.createClient(
-  SUPABASE_URL,
-  SUPABASE_KEY
-);
-
-
-/* =====================================
-   2. データ
-===================================== */
-
-let attempts = [];
-
-let questions = [];
-
-let selectedPrintAttempt = null;
-
-
-/* =====================================
-   3. HTMLエスケープ
-===================================== */
-
-function escapeHTML(value) {
-
-  return String(value ?? "").replace(
-    /[&<>"']/g,
-    c => ({
-      "&":"&amp;",
-      "<":"&lt;",
-      ">":"&gt;",
-      '"':"&quot;",
-      "'":"&#39;"
-    }[c])
-  );
-
+function seededNumber(seed,min,max,salt){
+let h=2166136261;const s=String(seed)+"|"+salt;
+for(let i=0;i<s.length;i++){h^=s.charCodeAt(i);h=Math.imul(h,16777619);}
+return Math.floor(min+(h>>>0)/4294967295*(max-min+1));
+}
+function referenceStats(examId){
+const avg=seededNumber(examId,60,80,"average");
+const high=Math.max(avg+5,seededNumber(examId,85,100,"high"));
+const low=Math.min(avg-5,seededNumber(examId,20,45,"low"));
+return{average:avg,high:Math.min(100,high),low:Math.max(0,low)};
+}
+function scoreFor(a){
+const qs=questions.filter(q=>q.exam_id===a.exam_id);
+const total=qs.length||Number(a.total_questions)||0;
+if(!total||a.correct_count==null)return null;
+return Math.round(Number(a.correct_count)/total*100);
+}
+function commentFor(score){
+if(score>=90)return"非常に素晴らしい結果です。これまで積み重ねてきた努力が、今回の得点にしっかり表れています。間違えた問題や迷った問題も確認し、さらに高い目標に挑戦していきましょう。今後のさらなる成長を期待しています。";
+if(score>=80)return"よく頑張りました。基礎から応用まで、学習の成果が表れています。正解できた問題は自信につなげ、惜しくも間違えた問題は解き方を振り返りましょう。あと一歩の確認を積み重ね、次回はさらに安定した結果を目指してください。";
+if(score>=60)return"今回の試験、お疲れさまでした。理解できている内容がある一方、もう少し練習を重ねたい分野も見つかったと思います。間違えた問題を見直し、なぜその答えになるのか説明できるようにしましょう。毎日の積み重ねが次の成長につながります。";
+if(score>=40)return"最後まで試験に取り組んだことを、次につながる経験として受け止めましょう。今回の結果から復習すべき内容が見えてきます。基本事項から一つずつ確認し、短い時間でも繰り返し練習してください。焦らず着実に取り組めば必ず前進できます。次回も諦めずに挑戦しましょう。";
+return"今回の試験は、これからの学習方法を見直す良い機会です。思うような結果でなくても諦める必要はありません。基本事項を確認し、解けなかった問題を一問ずつ整理しましょう。分からないところをそのままにせず、少しずつ理解を積み重ねることが大切です。次回の挑戦を応援しています。";
 }
 
-
-/* =====================================
-   4. メッセージ
-===================================== */
-
-function showMessage(message) {
-
-  document.getElementById("message").textContent =
-    message;
-
+async function login(){
+const email=document.getElementById("email").value.trim();
+const password=document.getElementById("password").value;
+const btn=document.getElementById("loginBtn");
+if(!email||!password){showMessage("メールアドレスとパスワードを入力してください。");return;}
+btn.disabled=true;showMessage("ログインしています...");
+try{
+const{error}=await db.auth.signInWithPassword({email,password});
+if(error)throw error;
+await checkAdmin();
+}catch(e){showMessage("ログインできませんでした。\n"+e.message);}
+finally{btn.disabled=false;}
 }
 
-
-/* =====================================
-   5. ログイン
-===================================== */
-
-async function login() {
-
-  const email =
-    document.getElementById("email").value.trim();
-
-  const password =
-    document.getElementById("password").value;
-
-  const btn =
-    document.getElementById("loginBtn");
-
-
-  if (!email || !password) {
-
-    showMessage(
-      "メールアドレスとパスワードを入力してください。"
-    );
-
-    return;
-
-  }
-
-
-  btn.disabled = true;
-
-  showMessage("ログインしています...");
-
-
-  try {
-
-    const { error } =
-      await db.auth.signInWithPassword({
-        email,
-        password
-      });
-
-    if (error) throw error;
-
-    await checkAdmin();
-
-  } catch (error) {
-
-    showMessage(
-      "ログインできませんでした。\n" +
-      error.message
-    );
-
-  } finally {
-
-    btn.disabled = false;
-
-  }
-
+async function checkAdmin(){
+const{data:{user},error}=await db.auth.getUser();
+if(error||!user){showMessage("ログイン情報を確認できません。");return;}
+if(user.id!==ADMIN_ID){
+await db.auth.signOut();
+showMessage("このアカウントには管理者権限がありません。");
+return;
+}
+document.getElementById("loginCard").classList.add("hidden");
+document.getElementById("dashboard").classList.remove("hidden");
+await loadResults();
 }
 
-
-/* =====================================
-   6. 管理者権限確認
-===================================== */
-
-async function checkAdmin() {
-
-  const {
-    data: { user },
-    error
-  } = await db.auth.getUser();
-
-
-  if (error || !user) {
-
-    showMessage(
-      "ログイン情報を確認できません。"
-    );
-
-    return;
-
-  }
-
-
-  if (user.id !== ADMIN_ID) {
-
-    await db.auth.signOut();
-
-    showMessage(
-      "このアカウントには管理者権限がありません。"
-    );
-
-    return;
-
-  }
-
-
-  document
-    .getElementById("loginCard")
-    .classList.add("hidden");
-
-  document
-    .getElementById("dashboard")
-    .classList.remove("hidden");
-
-
-  await loadResults();
-
-}
-
-
-/* =====================================
-   7. 結果取得
-===================================== */
-
-async function loadResults() {
-
-  const { data, error } =
-    await db.rpc("admin_get_results");
-
-
-  if (error) {
-
-    alert(
-      "結果を取得できませんでした。\n" +
-      error.message
-    );
-
-    return;
-
-  }
-
-
-  attempts = data?.attempts || [];
-
-  questions = data?.questions || [];
-
-
-  document
-    .getElementById("totalCount")
-    .textContent = attempts.length;
-
-
-  document
-    .getElementById("submittedCount")
-    .textContent =
-      attempts.filter(a =>
-        a.submitted_at ||
-        a.status === "submitted"
-      ).length;
-
-
-  document
-    .getElementById("ongoingCount")
-    .textContent =
-      attempts.filter(a =>
-        !a.submitted_at &&
-        a.status !== "submitted"
-      ).length;
-
-
-  const filter =
-    document.getElementById("examFilter");
-
-  const previous = filter.value;
-
-  const examMap = new Map();
-
-
-  attempts.forEach(a => {
-
-    examMap.set(
-      a.exam_code,
-      a.exam_title
-    );
-
-  });
-
-
-  filter.innerHTML =
-    '<option value="">すべての試験</option>';
-
-
-  examMap.forEach((title, code) => {
-
-    const option =
-      document.createElement("option");
-
-    option.value = code || "";
-
-    option.textContent =
-      title || code || "試験名不明";
-
-    filter.appendChild(option);
-
-  });
-
-
-  filter.value = previous;
-
-  renderResults();
-
-}
-
-
-/* =====================================
-   8. 絞り込み結果
-===================================== */
-
-function getFilteredAttempts() {
-
-  const exam =
-    document.getElementById("examFilter").value;
-
-  const keyword =
-    document
-      .getElementById("memberFilter")
-      .value
-      .trim()
-      .toLowerCase();
-
-
-  return attempts.filter(a => {
-
-    const matchExam =
-      !exam || a.exam_code === exam;
-
-    const text =
-      `${a.member_number || ""} ${a.full_name || ""}`
-        .toLowerCase();
-
-    return matchExam && text.includes(keyword);
-
-  });
-
-}
-
-
-/* =====================================
-   9. 結果一覧表示
-===================================== */
-
-function renderResults() {
-
-  const filtered = getFilteredAttempts();
-
-  const body =
-    document.getElementById("resultsBody");
-
-  body.innerHTML = "";
-
-
-  document
-    .getElementById("emptyMessage")
-    .textContent =
-      filtered.length
-        ? ""
-        : "該当する受験記録はありません。";
-
-
-  filtered.forEach(a => {
-
-    const index = attempts.indexOf(a);
-
-    const submitted =
-      !!a.submitted_at ||
-      a.status === "submitted";
-
-    const count =
-      a.correct_count ?? "-";
-
-    const detailId =
-      "detail-" + index;
-
-
-    const tr =
-      document.createElement("tr");
-
-
-    tr.innerHTML = `
-      <td>${escapeHTML(a.member_number || "-")}</td>
-      <td>${escapeHTML(a.full_name || "氏名不明")}</td>
-      <td>${escapeHTML(a.exam_title || "-")}</td>
-      <td>${escapeHTML(count)}</td>
-      <td>${submitted ? "提出済み" : "受験中"}</td>
-      <td>
-        <button onclick="toggleDetail('${detailId}')">
-          回答を見る
-        </button>
-
-        <button
-          class="green"
-          onclick="printIndividual(${index})"
-        >
-          個人票印刷
-        </button>
-      </td>
-    `;
-
-
-    body.appendChild(tr);
-
-
-    const detailRow =
-      document.createElement("tr");
-
-    detailRow.id = detailId;
-
-    detailRow.className = "hidden";
-
-
-    const detailCell =
-      document.createElement("td");
-
-    detailCell.colSpan = 6;
-
-
-    detailCell.innerHTML = `
-      <div class="card">
-
-        <p>
-          <b>試験：</b>
-          ${escapeHTML(a.exam_title || "-")}
-        </p>
-
-        <p>
-          <b>開始：</b>
-          ${escapeHTML(formatDate(a.started_at))}
-        </p>
-
-        <p>
-          <b>提出：</b>
-          ${escapeHTML(formatDate(a.submitted_at))}
-        </p>
-
-        <p>
-          <b>正答数：</b>
-          ${escapeHTML(count)}
-        </p>
-
-        <div class="detail-actions">
-
-          <button
-            class="green"
-            onclick="printIndividual(${index})"
-          >
-            この受験者の成績表を印刷
-          </button>
-
-        </div>
-
-        <h3>回答内容</h3>
-
-        ${renderAnswers(a)}
-
-      </div>
-    `;
-
-
-    detailRow.appendChild(detailCell);
-
-    body.appendChild(detailRow);
-
-  });
-
-}
-
-
-/* =====================================
-   10. 回答詳細の開閉
-===================================== */
-
-function toggleDetail(id) {
-
-  const element =
-    document.getElementById(id);
-
-  if (element) {
-
-    element.classList.toggle("hidden");
-
-  }
-
-}
-
-
-/* =====================================
-   11. 日時表示
-===================================== */
-
-function formatDate(value) {
-
-  if (!value) return "未提出";
-
-  const d = new Date(value);
-
-  return isNaN(d.getTime())
-    ? "-"
-    : d.toLocaleString("ja-JP");
-
-}
-
-
-/* =====================================
-   12. 回答データ取得
-===================================== */
-
-function getAttemptAnswers(attempt) {
-
-  const qs = questions
-    .filter(q => q.exam_id === attempt.exam_id)
-    .sort((a, b) =>
-      a.question_number - b.question_number
-    );
-
-
-  const answers = attempt.answers || {};
-
-
-  return qs.map(q => {
-
-    let selected =
-      answers[q.question_id];
-
-
-    if (selected === undefined) {
-
-      selected =
-        answers[String(q.question_number)];
-
-    }
-
-
-    if (selected === undefined) {
-
-      selected =
-        answers[q.question_number - 1];
-
-    }
-
-
-    if (
-      selected &&
-      typeof selected === "object"
-    ) {
-
-      selected =
-        selected.answer ??
-        selected.selected ??
-        selected.value ??
-        JSON.stringify(selected);
-
-    }
-
-
-    const correct =
-      q.correct_answer;
-
-    const answered =
-      selected !== undefined &&
-      selected !== null &&
-      selected !== "";
-
-    const isCorrect =
-      answered &&
-      correct !== undefined &&
-      correct !== null &&
-      String(selected) === String(correct);
-
-
-    return {
-      questionNumber:q.question_number,
-      questionText:q.question_text || "",
-      selected:answered ? String(selected) : "未回答",
-      correct:correct ?? "未設定",
-      answered,
-      isCorrect
-    };
-
-  });
-
-}
-
-
-/* =====================================
-   13. 回答詳細表示
-===================================== */
-
-function renderAnswers(attempt) {
-
-  const qs =
-    questions.filter(q =>
-      q.exam_id === attempt.exam_id
-    ).sort((a, b) =>
-      a.question_number - b.question_number
-    );
-
-
-  if (!qs.length) {
-
-    return `
-      <pre>${escapeHTML(
-        JSON.stringify(
-          attempt.answers || {},
-          null,
-          2
-        )
-      )}</pre>
-    `;
-
-  }
-
-
-  const rows =
-    getAttemptAnswers(attempt);
-
-
-  return rows.map(item => {
-
-    const status =
-      !item.answered
-        ? "未回答"
-        : item.isCorrect
-          ? "正解"
-          : "不正解";
-
-    const className =
-      item.isCorrect ? "good" : "bad";
-
-
-    return `
-      <div class="answer">
-
-        <b>第${escapeHTML(item.questionNumber)}問</b>
-
-        <p>
-          ${escapeHTML(item.questionText)}
-        </p>
-
-        <p>
-          受験者の回答：
-          ${escapeHTML(item.selected)}
-        </p>
-
-        <p>
-          正解：
-          ${escapeHTML(item.correct)}
-        </p>
-
-        <p class="${className}">
-          ${status}
-        </p>
-
-      </div>
-    `;
-
-  }).join("");
-
-}
-
-
-/* =====================================
-   14. 印刷用共通ヘッダー
-===================================== */
-
-function printHeader(title) {
-
-  return `
-    <div class="print-company">
-      株式会社ゲートスクエア
-    </div>
-
-    <div class="print-title">
-      ${escapeHTML(title)}
-    </div>
-
-    <div class="print-date">
-      印刷日時：
-      ${escapeHTML(
-        new Date().toLocaleString("ja-JP")
-      )}
-    </div>
-  `;
-
-}
-
-
-/* =====================================
-   15. 成績一覧印刷
-===================================== */
-
-function printList() {
-
-  const filtered =
-    getFilteredAttempts();
-
-
-  if (!filtered.length) {
-
-    alert("印刷対象の受験記録がありません。");
-
-    return;
-
-  }
-
-
-  const rows = filtered.map(a => {
-
-    const submitted =
-      !!a.submitted_at ||
-      a.status === "submitted";
-
-
-    return `
-      <tr>
-
-        <td>
-          ${escapeHTML(a.member_number || "-")}
-        </td>
-
-        <td>
-          ${escapeHTML(a.full_name || "氏名不明")}
-        </td>
-
-        <td>
-          ${escapeHTML(a.exam_title || "-")}
-        </td>
-
-        <td>
-          ${escapeHTML(a.correct_count ?? "-")}
-        </td>
-
-        <td>
-          ${submitted ? "提出済み" : "受験中"}
-        </td>
-
-        <td>
-          ${escapeHTML(formatDate(a.started_at))}
-        </td>
-
-        <td>
-          ${escapeHTML(formatDate(a.submitted_at))}
-        </td>
-
-      </tr>
-    `;
-
-  }).join("");
-
-
-  const html = `
-
-    <div class="print-sheet">
-
-      ${printHeader("オルビステスト 成績一覧表")}
-
-      <p>
-        受験記録：
-        ${filtered.length}件
-      </p>
-
-      <table class="print-table">
-
-        <thead>
-          <tr>
-            <th>会員番号</th>
-            <th>氏名</th>
-            <th>試験名</th>
-            <th>正答数</th>
-            <th>状態</th>
-            <th>開始日時</th>
-            <th>提出日時</th>
-          </tr>
-        </thead>
-
-        <tbody>
-          ${rows}
-        </tbody>
-
-      </table>
-
-      <div class="print-footer">
-        株式会社ゲートスクエア
-      </div>
-
-    </div>
-
-  `;
-
-
-  openPrintWindow(html);
-
-}
-
-
-/* =====================================
-   16. 個人別成績表印刷
-===================================== */
-
-function printIndividual(index) {
-
-  const attempt = attempts[index];
-
-
-  if (!attempt) {
-
-    alert("受験データが見つかりません。");
-
-    return;
-
-  }
-
-
-  selectedPrintAttempt = attempt;
-
-
-  const submitted =
-    !!attempt.submitted_at ||
-    attempt.status === "submitted";
-
-
-  const rows =
-    getAttemptAnswers(attempt);
-
-
-  const questionHtml = rows.length
-
-    ? rows.map(item => {
-
-        const status =
-          !item.answered
-            ? "未回答"
-            : item.isCorrect
-              ? "正解"
-              : "不正解";
-
-        const statusClass =
-          item.isCorrect
-            ? "print-correct"
-            : "print-incorrect";
-
-
-        return `
-
-          <div class="print-answer">
-
-            <b>
-              第${escapeHTML(item.questionNumber)}問
-            </b>
-
-            <p>
-              <b>問題：</b>
-              ${escapeHTML(item.questionText)}
-            </p>
-
-            <p>
-              <b>受験者の回答：</b>
-              ${escapeHTML(item.selected)}
-            </p>
-
-            <p>
-              <b>正解：</b>
-              ${escapeHTML(item.correct)}
-            </p>
-
-            <p class="${statusClass}">
-              判定：${status}
-            </p>
-
-          </div>
-
-        `;
-
-      }).join("")
-
-    : `
-      <p>
-        問題データが取得できません。
-      </p>
-
-      <pre>
-        ${escapeHTML(
-          JSON.stringify(
-            attempt.answers || {},
-            null,
-            2
-          )
-        )}
-      </pre>
-    `;
-
-
-  const correctCount =
-    attempt.correct_count ?? "-";
-
-
-  const html = `
-
-    <div class="print-sheet">
-
-      ${printHeader("オルビステスト 個人成績表")}
-
-
-      <table class="print-table print-info">
-
-        <tbody>
-
-          <tr>
-            <th>受験者氏名</th>
-            <td>
-              ${escapeHTML(attempt.full_name || "氏名不明")}
-            </td>
-          </tr>
-
-          <tr>
-            <th>会員番号</th>
-            <td>
-              ${escapeHTML(attempt.member_number || "-")}
-            </td>
-          </tr>
-
-          <tr>
-            <th>試験名</th>
-            <td>
-              ${escapeHTML(attempt.exam_title || "-")}
-            </td>
-          </tr>
-
-          <tr>
-            <th>受験状態</th>
-            <td>
-              ${submitted ? "提出済み" : "受験中"}
-            </td>
-          </tr>
-
-          <tr>
-            <th>受験開始日時</th>
-            <td>
-              ${escapeHTML(formatDate(attempt.started_at))}
-            </td>
-          </tr>
-
-          <tr>
-            <th>提出日時</th>
-            <td>
-              ${escapeHTML(formatDate(attempt.submitted_at))}
-            </td>
-          </tr>
-
-          <tr>
-            <th>正答数</th>
-            <td>
-              ${escapeHTML(correctCount)}
-            </td>
-          </tr>
-
-        </tbody>
-
-      </table>
-
-
-      <div class="print-subtitle">
-        回答・採点詳細
-      </div>
-
-      ${questionHtml}
-
-
-      <div class="print-footer">
-        株式会社ゲートスクエア
-      </div>
-
-    </div>
-
-  `;
-
-
-  openPrintWindow(html);
-
-}
-
-
-/* =====================================
-   17. 印刷実行
-===================================== */
-
-function openPrintWindow(html) {
-
-  const area =
-    document.getElementById("printArea");
-
-
-  area.innerHTML = html;
-
-
-  window.print();
-
-}
-
-
-/* =====================================
-   18. ログアウト
-===================================== */
-
-async function logout() {
-
-  await db.auth.signOut();
-
-  location.reload();
-
-}
-
-
-/* =====================================
-   19. 初期化
-===================================== */
-
-async function initialize() {
-
-  const {
-    data: { session }
-  } = await db.auth.getSession();
-
-
-  if (session) {
-
-    await checkAdmin();
-
-  }
-
-}
-
-
-/* =====================================
-   20. 認証状態監視
-===================================== */
-
-db.auth.onAuthStateChange((event, session) => {
-
-  if (event === "SIGNED_OUT") {
-
-    document
-      .getElementById("dashboard")
-      .classList.add("hidden");
-
-    document
-      .getElementById("loginCard")
-      .classList.remove("hidden");
-
-  }
-
+async function loadResults(){
+const{data,error}=await db.rpc("admin_get_results");
+if(error){alert("結果を取得できませんでした。\n"+error.message);return;}
+attempts=data?.attempts||[];
+questions=data?.questions||[];
+document.getElementById("totalCount").textContent=attempts.length;
+document.getElementById("submittedCount").textContent=attempts.filter(a=>a.submitted_at||a.status==="submitted").length;
+document.getElementById("ongoingCount").textContent=attempts.filter(a=>!a.submitted_at&&a.status!=="submitted").length;
+const f=document.getElementById("examFilter"),old=f.value,map=new Map();
+attempts.forEach(a=>map.set(a.exam_code,a.exam_title));
+f.innerHTML='<option value="">すべての試験</option>';
+map.forEach((title,code)=>{
+const o=document.createElement("option");o.value=code||"";
+o.textContent=title||code||"試験名不明";f.appendChild(o);
 });
+f.value=old;renderResults();
+}
 
+function renderResults(){
+const exam=document.getElementById("examFilter").value;
+const keyword=document.getElementById("memberFilter").value.trim().toLowerCase();
+filteredAttempts=attempts.filter(a=>(!exam||a.exam_code===exam)&&(`${a.member_number||""} ${a.full_name||""}`).toLowerCase().includes(keyword));
+const body=document.getElementById("resultsBody");body.replaceChildren();
+document.getElementById("emptyMessage").textContent=filteredAttempts.length?"":"該当する受験記録はありません。";
+filteredAttempts.forEach((a,i)=>{
+const submitted=!!a.submitted_at||a.status==="submitted";
+const score=scoreFor(a),stats=referenceStats(a.exam_id||a.exam_code||a.exam_title);
+const diff=score==null?null:score-stats.average;
+const tr=document.createElement("tr");
+tr.innerHTML=`<td>${escapeHTML(a.member_number||"-")}</td><td>${escapeHTML(a.full_name||"氏名不明")}</td><td>${escapeHTML(a.exam_title||"-")}</td><td>${escapeHTML(a.correct_count??"-")}</td><td>${score==null?"-":score+"点"}</td><td>${stats.average}点</td><td>${diff==null?"-":(diff>=0?"+":"")+diff+"点"}</td><td>${submitted?"提出済み":"受験中"}</td><td class="no-print"><button onclick="toggleDetail(${i})">詳細</button><button class="green" onclick="printIndividual(${i})">個人票印刷</button></td>`;
+body.appendChild(tr);
+const dr=document.createElement("tr");dr.id="detail-"+i;dr.className="hidden";
+const td=document.createElement("td");td.colSpan=9;td.innerHTML=detailHTML(a,score,stats);
+dr.appendChild(td);body.appendChild(dr);
+});
+}
 
-/* =====================================
-   21. 起動
-===================================== */
+function toggleDetail(i){document.getElementById("detail-"+i).classList.toggle("hidden");}
+function formatDate(v){
+if(!v)return"未提出";
+const d=new Date(v);return isNaN(d.getTime())?"-":d.toLocaleString("ja-JP");
+}
+function getAnswerMap(a){return a.answers&&typeof a.answers==="object"?a.answers:{};}
+function selectedAnswer(a,q){
+const ans=getAnswerMap(a);let v=ans[q.question_id||q.id];
+if(v===undefined)v=ans[String(q.question_number)];
+if(v===undefined)v=ans[q.question_number-1];
+if(v&&typeof v==="object")v=v.answer??v.selected??v.value??JSON.stringify(v);
+return v;
+}
+function renderAnswerList(a){
+const qs=questions.filter(q=>q.exam_id===a.exam_id).sort((x,y)=>x.question_number-y.question_number);
+if(!qs.length)return`<pre>${escapeHTML(JSON.stringify(a.answers||{},null,2))}</pre>`;
+return qs.map(q=>{
+const sel=selectedAnswer(a,q),correct=q.correct_answer;
+const answered=sel!==undefined&&sel!==null&&sel!=="";
+const ok=answered&&String(sel)===String(correct);
+return`<div class="answer"><b>第${escapeHTML(q.question_number)}問</b><p>${escapeHTML(q.question_text||"")}</p><p>受験者の回答：${answered?escapeHTML(sel):"未回答"}</p><p>正解：${escapeHTML(correct??"未設定")}</p><p class="${ok?"good":"bad"}">${!answered?"未回答":ok?"正解":"不正解"}</p></div>`;
+}).join("");
+}
+function detailHTML(a,score,stats){
+const diff=score==null?null:score-stats.average;
+return`<div class="card">
+<p><b>受験番号：</b>${escapeHTML(a.member_number||"-")}</p>
+<p><b>氏名：</b>${escapeHTML(a.full_name||"氏名不明")}</p>
+<p><b>試験：</b>${escapeHTML(a.exam_title||"-")}</p>
+<p><b>開始：</b>${escapeHTML(formatDate(a.started_at))}</p>
+<p><b>提出：</b>${escapeHTML(formatDate(a.submitted_at))}</p>
+<p><b>正答数：</b>${escapeHTML(a.correct_count??"-")}</p>
+<p><b>得点：</b>${score==null?"-":score+"点"}</p>
+<p><b>参考平均点：</b>${stats.average}点　<b>参考最高点：</b>${stats.high}点　<b>参考最低点：</b>${stats.low}点</p>
+<p><b>平均点との差：</b>${diff==null?"-":(diff>=0?"+":"")+diff+"点"}</p>
+<div class="comment"><b>講評</b><br>${score==null?"提出後に採点結果が表示されます。":commentFor(score)}</div>
+<h3>回答内容</h3>${renderAnswerList(a)}
+</div>`;
+}
 
+function printList(){
+const rows=filteredAttempts.filter(a=>a.submitted_at||a.status==="submitted");
+if(!rows.length){alert("印刷できる提出済み成績がありません。");return;}
+const w=window.open("","_blank");
+if(!w){alert("印刷画面が開けません。ポップアップを許可してください。");return;}
+w.document.write(printDocument("オルビステスト 成績一覧",`<table><thead><tr><th>受験番号</th><th>氏名</th><th>試験</th><th>正答数</th><th>得点</th><th>参考平均</th><th>平均差</th><th>提出日時</th></tr></thead><tbody>${rows.map(a=>{
+const sc=scoreFor(a),st=referenceStats(a.exam_id||a.exam_code||a.exam_title);
+const d=sc==null?"-":(sc-st.average>=0?"+":"")+(sc-st.average);
+return`<tr><td>${escapeHTML(a.member_number||"-")}</td><td>${escapeHTML(a.full_name||"-")}</td><td>${escapeHTML(a.exam_title||"-")}</td><td>${escapeHTML(a.correct_count??"-")}</td><td>${sc==null?"-":sc+"点"}</td><td>${st.average}点</td><td>${d}</td><td>${escapeHTML(formatDate(a.submitted_at))}</td></tr>`;
+}).join("")}</tbody></table>`));
+w.document.close();w.focus();w.print();
+}
+
+function printIndividual(index){
+const a=filteredAttempts[index];if(!a)return;
+const sc=scoreFor(a),st=referenceStats(a.exam_id||a.exam_code||a.exam_title);
+const d=sc==null?"-":(sc-st.average>=0?"+":"")+(sc-st.average)+"点";
+const html=`<h2>受験者成績個人票</h2>
+<table><tbody>
+<tr><th>受験番号</th><td>${escapeHTML(a.member_number||"-")}</td></tr>
+<tr><th>氏名</th><td>${escapeHTML(a.full_name||"-")}</td></tr>
+<tr><th>試験名</th><td>${escapeHTML(a.exam_title||"-")}</td></tr>
+<tr><th>開始日時</th><td>${escapeHTML(formatDate(a.started_at))}</td></tr>
+<tr><th>提出日時</th><td>${escapeHTML(formatDate(a.submitted_at))}</td></tr>
+<tr><th>正答数</th><td>${escapeHTML(a.correct_count??"-")}</td></tr>
+<tr><th>得点</th><td>${sc==null?"-":sc+"点"}</td></tr>
+<tr><th>参考平均点</th><td>${st.average}点</td></tr>
+<tr><th>参考最高点</th><td>${st.high}点</td></tr>
+<tr><th>参考最低点</th><td>${st.low}点</td></tr>
+<tr><th>平均点との差</th><td>${d}</td></tr>
+</tbody></table>
+<div class="comment"><b>講評</b><br>${sc==null?"採点結果はまだありません。":commentFor(sc)}</div>
+<h3>回答内容・正誤</h3>${renderAnswerList(a)}`;
+const w=window.open("","_blank");
+if(!w){alert("印刷画面が開けません。ポップアップを許可してください。");return;}
+w.document.write(printDocument("オルビステスト 成績表",html));
+w.document.close();w.focus();w.print();
+}
+
+function printDocument(title,body){
+return`<!DOCTYPE html><html lang="ja"><head><meta charset="UTF-8"><title>${escapeHTML(title)}</title>
+<style>
+body{font-family:Arial,"Noto Sans JP",sans-serif;color:#111;padding:20px}
+h1{text-align:center;font-size:22px}
+h2{margin-top:0}
+table{width:100%;border-collapse:collapse;margin:18px 0}
+th,td{border:1px solid #555;padding:8px;text-align:left;font-size:12px}
+th{background:#f1f5f9}
+.comment{border:1px solid #777;padding:12px;line-height:1.8;margin:16px 0}
+.answer{border-bottom:1px solid #bbb;padding:8px 0;line-height:1.5;font-size:12px}
+.good{color:green}.bad{color:#b91c1c}
+@page{size:A4;margin:12mm}
+</style></head><body>
+<h1>${escapeHTML(title)}</h1>
+<div style="text-align:center;font-weight:bold">株式会社ゲートスクエア</div>
+${body}
+<p style="text-align:right;font-size:11px">ORBIS CBT SYSTEM</p>
+</body></html>`;
+}
+
+async function logout(){await db.auth.signOut();location.reload();}
+async function initialize(){
+const{data:{session}}=await db.auth.getSession();
+if(session)await checkAdmin();
+}
+db.auth.onAuthStateChange(event=>{
+if(event==="SIGNED_OUT"){
+document.getElementById("dashboard").classList.add("hidden");
+document.getElementById("loginCard").classList.remove("hidden");
+}
+});
+document.getElementById("password").addEventListener("keydown",e=>{if(e.key==="Enter")login();});
 initialize();
-
 </script>
-
 </body>
 </html>
